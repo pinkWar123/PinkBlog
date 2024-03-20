@@ -29,7 +29,7 @@ const contentStyle: React.CSSProperties = {
   minHeight: 120,
   lineHeight: "120px",
   color: "#fff",
-  backgroundColor: "#0958d9",
+  // backgroundColor: "#0958d9",
 };
 
 const siderStyle: React.CSSProperties = {
@@ -64,7 +64,7 @@ const MainLayout = () => (
   >
     <MainHeader />
     <Layout>
-      <Content style={contentStyle}>
+      <Content>
         <Outlet />
       </Content>
       <Sider width="25%" style={siderStyle}>

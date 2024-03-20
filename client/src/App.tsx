@@ -3,6 +3,7 @@ import { MainLayout } from "./layouts";
 import NotFound from "./components/shared/not-found";
 import DashBoard from "./pages/dashboard";
 import "./App.css";
+import { Post } from "./pages";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -12,8 +13,8 @@ export default function App() {
       errorElement: <NotFound />,
       children: [
         {
-          path: "/dashboard",
-          element: <DashBoard />,
+          path: "/",
+          element: <Post />,
         },
       ],
     },

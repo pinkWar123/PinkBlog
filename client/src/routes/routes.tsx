@@ -1,5 +1,4 @@
-import { MainLayout } from "../layouts";
-import { Home } from "../pages/home";
+import { Post } from "../pages";
 
 interface routesProps {
   path: string;
@@ -9,7 +8,7 @@ interface routesProps {
 export const publicRoutes: [routesProps] = [
   {
     path: "/",
-    component: <Home />,
+    component: <Post />,
   },
 ];
 

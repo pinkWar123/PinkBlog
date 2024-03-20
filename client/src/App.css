@@ -1,3 +1,7 @@
+:root {
+  --content-nav-background: #0b1a33 !important;
+}
+
 ul {
   list-style-type: none;
 }
