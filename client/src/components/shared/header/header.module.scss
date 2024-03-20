@@ -1,0 +1,14 @@
+.container {
+  padding-left: 0;
+  min-width: 160px;
+}
+
+.item {
+  display: flex;
+  cursor: pointer;
+  font-size: 15px;
+
+  &:hover {
+    background-color: azure;
+  }
+}
