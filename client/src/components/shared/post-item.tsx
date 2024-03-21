@@ -7,19 +7,21 @@ const PostItem: React.FC = () => {
       <Card hoverable style={{ marginTop: "12px" }}>
         <Meta
           avatar={<Avatar />}
-          title=<div style={{ display: "flex", alignItems: "center" }}>
-            <a>Hello world</a>
-            <div
-              style={{
-                color: "rgba(0,0,0,0.3)",
-                fontWeight: 500,
-                fontSize: "12px",
-                marginLeft: "24px",
-              }}
-            >
-              Khoang 1h
+          title={
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <a>Hello world</a>
+              <div
+                style={{
+                  color: "rgba(0,0,0,0.3)",
+                  fontWeight: 500,
+                  fontSize: "12px",
+                  marginLeft: "24px",
+                }}
+              >
+                Khoang 1h
+              </div>
             </div>
-          </div>
+          }
           description=<div style={{ color: "black", fontSize: "20px" }}>
             <ul style={{ padding: 0, margin: 0 }}>
               <li>

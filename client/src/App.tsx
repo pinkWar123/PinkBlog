@@ -1,9 +1,9 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import NotFound from "./components/shared/not-found";
-import DashBoard from "./pages/dashboard";
 import "./App.css";
-import { Post } from "./pages";
+import { Auth, Post, Register } from "./pages";
+import AuthLayout from "./layouts/AuthLayout";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -16,6 +16,14 @@ export default function App() {
           path: "/",
           element: <Post />,
         },
+      ],
+    },
+    {
+      element: <AuthLayout />,
+      errorElement: <NotFound />,
+      children: [
+        { path: "/auth", element: <Auth /> },
+        { path: "/auth/register", element: <Register /> },
       ],
     },
   ]);

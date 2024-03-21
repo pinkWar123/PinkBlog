@@ -1,7 +1,10 @@
+import { Outlet } from "react-router-dom";
+
 interface IProps {
   children?: string | React.ReactElement;
 }
 
 export default function AuthLayout(props: IProps) {
-  return <>{props.children}</>;
+  if (props.children) return <>{props.children}</>;
+  return <Outlet />;
 }
