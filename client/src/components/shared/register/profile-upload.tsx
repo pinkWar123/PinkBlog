@@ -7,7 +7,7 @@ import {
   UploadProps,
   message,
 } from "antd";
-import { MouseEventHandler, useState } from "react";
+import { useState } from "react";
 import { NextButton, PreviousButton, UploadButton } from "./buttons";
 import { DoubleProps } from "../../../pages/register";
 
@@ -50,20 +50,6 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
       file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
     );
   };
-
-  //   const handleChange: UploadProps['onChange'] = (info) => {
-  //     if (info.file.status === 'uploading') {
-  //       setLoading(true);
-  //       return;
-  //     }
-  //     if (info.file.status === 'done') {
-  //       // Get this url from response in real world.
-  //       getBase64(info.file.originFileObj as FileType, (url:string) => {
-  //         setLoading(false);
-  //         setImageUrl(url);
-  //       });
-  //     }
-  //   };
 
   const handleCancel = () => setPreviewOpen(false);
 

@@ -1,4 +1,4 @@
-import { Button, Card, FormProps, Input, InputNumber } from "antd";
+import { FormProps, Input, InputNumber } from "antd";
 import { Form } from "antd";
 import { NextButton } from "./buttons";
 import { SingleProps } from "../../../pages/register";
@@ -12,10 +12,6 @@ const formItemLayout = {
     xs: { span: 24 },
     sm: { span: 16 },
   },
-};
-
-type IProps = {
-  onNext: Function;
 };
 
 type FieldType = {

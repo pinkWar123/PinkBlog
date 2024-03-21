@@ -1,7 +1,6 @@
 import {
   FileDoneOutlined,
   PictureOutlined,
-  ProfileOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import { Steps } from "antd";

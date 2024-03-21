@@ -4,9 +4,8 @@ import {
   ProfileUpload,
   Success,
   UserInfo,
-  items,
 } from "../components/shared/register";
-import { Button, Card } from "antd";
+import { Card } from "antd";
 
 const Register: React.FC = () => {
   const [current, setCurrent] = useState<number>(0);
