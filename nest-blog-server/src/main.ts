@@ -11,6 +11,7 @@ import helmet from 'helmet';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Config global guards and transform message
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new JwtAuthGuard(reflector));
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
@@ -19,6 +20,8 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+
+  // config CORS
   app.enableCors({
     origin: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -26,10 +29,16 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     credentials: true,
   });
+
+  // Config api v1
   app.setGlobalPrefix('api');
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: ['1'] });
+
+  // Config cookie parser adn helmet
   app.use(cookieParser());
   app.use(helmet());
+
+  // Config swagger
   const config = new DocumentBuilder()
     .setTitle('Blog document')
     .setDescription('This is API documentation for Blog server')
