@@ -1,5 +1,5 @@
 import { Avatar, Card, Tag } from "antd";
-import styles from "../../styles/post-item.module.scss";
+import styles from "./PostItem.module.scss";
 const { Meta } = Card;
 const PostItem: React.FC = () => {
   return (

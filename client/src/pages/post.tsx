@@ -1,30 +1,45 @@
-import { ConfigProvider, Tabs, TabsProps } from "antd";
+import { Button, ConfigProvider, Tabs, TabsProps } from "antd";
 import React from "react";
 import styles from "../styles/content-nav.module.scss";
 import { PostItem } from "../components/shared";
+import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
 const items: TabsProps["items"] = [
   {
-    key: "1",
+    key: "content-creator",
     label: "NHÀ SÁNG TẠO NỘI DUNG",
     children: (
-      <div style={{ textAlign: "left" }}>
+      <div>
         <PostItem />
       </div>
     ),
   },
   {
-    key: "2",
+    key: "following",
     label: "ĐANG THEO DÕI",
-    children: <div style={{ textAlign: "left" }}>"Following"</div>,
+    children: <div>"Following"</div>,
   },
   {
-    key: "3",
+    key: "latest",
     label: "MỚI NHẤT",
     children: <div style={{ textAlign: "left" }}>"Latest"</div>,
   },
   {
-    key: "4",
+    key: "series",
     label: "SERIES",
+    children: <div style={{ textAlign: "left" }}>"Series"</div>,
+  },
+  {
+    key: "post",
+    label: (
+      <Button
+        style={{ backgroundColor: "red" }}
+        shape="round"
+        icon={<EditOutlined />}
+        size="middle"
+      >
+        Viết bài
+      </Button>
+    ),
     children: <div style={{ textAlign: "left" }}>"Series"</div>,
   },
 ];
@@ -38,7 +53,7 @@ const Post: React.FC = () => {
           components: {
             Tabs: {
               itemColor: "var(--content-nav-background)",
-              horizontalItemGutter: 32,
+              horizontalItemGutter: 12,
             },
           },
         }}
@@ -47,7 +62,8 @@ const Post: React.FC = () => {
           defaultActiveKey="1"
           items={items}
           onChange={onChange}
-          className={styles["nav"]}
+          //className={styles["nav"]}
+          centered
         />
       </ConfigProvider>
     </>

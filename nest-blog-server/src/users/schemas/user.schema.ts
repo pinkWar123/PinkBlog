@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose from 'mongoose';
 
 @Schema()
 export class User {
@@ -24,3 +24,5 @@ export class User {
   @Prop()
   refreshToken?: string;
 }
+
+export const UserSchema = SchemaFactory.createForClass(User);
