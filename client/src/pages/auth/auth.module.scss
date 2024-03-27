@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+  background-color: #eee;
+  width: 100%;
+  height: 100vh;
+
+  .card-container {
+    margin: auto;
+    align-content: center;
+    width: 30%;
+    min-width: 400px;
+  }
+
+  .title {
+    font-size: 32px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 24px;
+  }
+}

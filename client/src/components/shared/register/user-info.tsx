@@ -1,7 +1,7 @@
 import { FormProps, Input, InputNumber } from "antd";
 import { Form } from "antd";
 import { NextButton } from "./buttons";
-import { SingleProps } from "../../../pages/register";
+import { SingleProps } from "../../../pages/auth/register";
 
 const formItemLayout = {
   labelCol: {

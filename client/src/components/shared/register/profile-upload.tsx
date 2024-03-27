@@ -9,7 +9,7 @@ import {
 } from "antd";
 import { useState } from "react";
 import { NextButton, PreviousButton, UploadButton } from "./buttons";
-import { DoubleProps } from "../../../pages/register";
+import { DoubleProps } from "../../../pages/auth/register";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 

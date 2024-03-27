@@ -1,0 +1,27 @@
+.post-item {
+  .post-title {
+    font-size: 18px;
+  }
+
+  .post-tag {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .post-item {
+    /* Adjust styles for smaller screens */
+    .post-title {
+      font-size: 12px;
+    }
+    .post-tag {
+      font-size: 8px;
+    }
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .post-item {
+    /* Further adjustments for even smaller screens */
+  }
+}

@@ -7,8 +7,9 @@ import {
 } from "@ant-design/icons";
 import { Avatar, Divider, Menu, MenuProps, Popover, Space, Switch } from "antd";
 import { Header } from "antd/es/layout/layout";
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./header.module.scss";
+import { fetchUser } from "../../../services";
 const leftMenuItems: MenuProps["items"] = [
   {
     key: 0,
@@ -104,6 +105,13 @@ const rightMenuItems = [
 ];
 
 const MainHeader = () => {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const res = await fetchUser();
+      console.log(res);
+    };
+    fetchUserData();
+  }, []);
   return (
     <Header
       style={{

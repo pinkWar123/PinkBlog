@@ -6,53 +6,39 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Checkbox, Col, Divider, Input, Row } from "antd";
 import { Form } from "antd";
-import { Link } from "react-router-dom";
-
-const onFinish = (value: any) => {
-  console.log(value);
-};
+import { Link, useNavigate } from "react-router-dom";
+import styles from "./auth.module.scss";
+import { UserLoginDto } from "../../types/auth";
+import login from "../../services/authApi";
 
 const Auth: React.FC = () => {
+  const navigate = useNavigate();
+  const onFinish = async (value: UserLoginDto) => {
+    const res = await login({
+      username: value.username,
+      password: value.password,
+    });
+
+    if (res?.status === 201) {
+      const accessToken = res?.data?.data.access_token;
+      localStorage.setItem("access_token", accessToken);
+      navigate("/");
+    }
+    console.log(res?.data?.data);
+  };
   return (
-    <div
-      style={{
-        display: "flex",
-        backgroundColor: "#eee",
-        width: "100%",
-        height: "100vh",
-      }}
-    >
-      <div
-        style={{
-          margin: "auto",
-          alignContent: "center",
-          width: "30%",
-          minWidth: "400px",
-        }}
-      >
+    <div className={styles["container"]}>
+      <div className={styles["card-container"]}>
         <Card>
           <div
             style={{
               marginTop: "24px",
             }}
           >
-            <div
-              style={{
-                fontSize: "32px",
-                fontWeight: "bold",
-                display: "flex",
-                justifyContent: "center",
-                paddingBottom: "24px",
-              }}
-            >
-              Đăng nhập
-            </div>
+            <div className={styles["title"]}>Đăng nhập</div>
             <Form
               name="normal_login"
               className="login-form"
-              initialValues={{
-                remember: true,
-              }}
               onFinish={onFinish}
             >
               <Form.Item

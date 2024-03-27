@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { RegisterSteps } from "../components/shared";
+import { RegisterSteps } from "../../components/shared";
 import {
   ProfileUpload,
   Success,
   UserInfo,
-} from "../components/shared/register";
+} from "../../components/shared/register";
 import { Card } from "antd";
 
 const Register: React.FC = () => {

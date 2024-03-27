@@ -1,14 +1,20 @@
 import { Avatar, Card, Tag } from "antd";
-
+import styles from "../../styles/post-item.module.scss";
 const { Meta } = Card;
 const PostItem: React.FC = () => {
   return (
-    <>
+    <div className={styles["post-item"]}>
       <Card hoverable style={{ marginTop: "12px" }}>
         <Meta
           avatar={<Avatar />}
           title={
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
               <a>Hello world</a>
               <div
                 style={{
@@ -24,27 +30,33 @@ const PostItem: React.FC = () => {
           }
           description=<div style={{ color: "black", fontSize: "20px" }}>
             <ul style={{ padding: 0, margin: 0 }}>
-              <li>
+              <li className={styles["post-title"]}>
                 Từ câu chuyện kải kách chữ Quốc ngữ đến những nguyên lý trong
                 lập trình
                 {/* A list of tags of the post */}
-                <div>
-                  <Tag color="magenta">Hello world</Tag>
-                  <Tag color="magenta">
+                <div style={{ display: "flex", flexWrap: "wrap" }}>
+                  <Tag color="magenta" className={styles["post-tag"]}>
+                    Hello world
+                  </Tag>
+                  <Tag color="magenta" className={styles["post-tag"]}>
                     [Paper Explain] Mixtral of Experts: Lắm thầy thì model khỏe
                   </Tag>
-                  <Tag color="magenta">
+                  <Tag color="magenta" className={styles["post-tag"]}>
                     Sử dụng Cobalt Strike cho Redteam (P1)
                   </Tag>
-                  <Tag color="magenta">Hello world</Tag>
-                  <Tag color="magenta">Hello world</Tag>
+                  <Tag color="magenta" className={styles["post-tag"]}>
+                    Hello world
+                  </Tag>
+                  <Tag color="magenta" className={styles["post-tag"]}>
+                    Hello world
+                  </Tag>
                 </div>
               </li>
             </ul>
           </div>
         />
       </Card>
-    </>
+    </div>
   );
 };
 
