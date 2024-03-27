@@ -10,9 +10,8 @@ import {
   Popover,
 } from "antd";
 import { Outlet } from "react-router-dom";
-import { InfoOutlined } from "@ant-design/icons";
-import { MainHeader } from "../components/shared";
-
+import { MainHeader } from "../../components/shared";
+import styles from "./MainLayout.module.scss";
 const { Header, Footer, Sider, Content } = Layout;
 
 const headerStyle: React.CSSProperties = {
@@ -53,21 +52,13 @@ const layoutStyle = {
 };
 
 const MainLayout = () => (
-  <Layout
-    style={{
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      width: "80%",
-      margin: "auto",
-    }}
-  >
+  <Layout className={styles["layout"]}>
     <MainHeader />
     <Layout>
       <Content>
         <Outlet />
       </Content>
-      <Sider width="25%" style={siderStyle}>
+      <Sider width="25%" style={siderStyle} className={styles["sider"]}>
         Sider
       </Sider>
     </Layout>

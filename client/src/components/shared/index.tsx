@@ -1,3 +1,3 @@
 export { default as MainHeader } from "./header";
-export { default as PostItem } from "./post-item";
+export { PostItem } from "./PostItem";
 export { RegisterSteps } from "./register";
