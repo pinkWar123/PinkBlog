@@ -20,8 +20,9 @@ const Auth: React.FC = () => {
     });
 
     if (res?.status === 201) {
-      const accessToken = res?.data?.data.access_token;
-      localStorage.setItem("access_token", accessToken);
+      const accessToken = res.data.data?.accessToken;
+      console.log(res);
+      if (accessToken) localStorage.setItem("access_token", accessToken);
       navigate("/");
     }
     console.log(res?.data?.data);

@@ -3,15 +3,17 @@ import { Button } from "antd";
 import { MouseEventHandler } from "react";
 
 type ButtonProps = {
+  loading?: boolean;
   onClick?: MouseEventHandler<HTMLElement>;
   htmlType?: "submit" | "reset" | "button";
 };
-const NextButton: React.FC<ButtonProps> = ({ onClick, htmlType }) => {
+const NextButton: React.FC<ButtonProps> = ({ onClick, htmlType, loading }) => {
   return (
     <Button
       type="primary"
       htmlType={htmlType ? htmlType : "submit"}
       onClick={onClick}
+      loading={loading}
     >
       Next
     </Button>
