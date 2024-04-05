@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateUserDto, UserRegisterDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './schemas/user.schema';
-
+import { User, UserDocument } from './schemas/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+  ) {}
   private readonly users = [
     {
       userId: 1,
@@ -17,7 +22,7 @@ export class UsersService {
       password: 'guess',
     },
   ];
-  create(createUserDto: CreateUserDto) {
+  async create(userRegisterDto: UserRegisterDto) {
     return 'This action adds a new user';
   }
 
@@ -38,6 +43,58 @@ export class UsersService {
   }
 
   async findOne(username: string) {
-    return this.users.find((user) => user.username === username);
+    const user = await this.userModel.findOne({ username });
+    return user;
+  }
+
+  async hasUsernameExisted(username: string) {
+    const user = await this.userModel.findOne({ username });
+    if (user !== null) {
+      return user.username;
+    }
+    return null;
+  }
+
+  async register(userRegisterDto: UserRegisterDto) {
+    const username = userRegisterDto.username;
+    const hasUsernameExisted = await this.hasUsernameExisted(username);
+    if (hasUsernameExisted !== null)
+      throw new BadRequestException('Username has already existed');
+    try {
+      const res = await this.userModel.create({
+        ...userRegisterDto,
+        password: this.getHashPassword(userRegisterDto.password),
+      });
+      return res;
+    } catch (error) {
+      throw new BadRequestException('Ahihie');
+    }
+  }
+
+  async updateUserRefreshToken(_id: string, refreshToken: string) {
+    try {
+      const user = await this.userModel.findById(_id);
+      if (user) {
+        const res = await this.userModel.updateOne(
+          { _id },
+          {
+            refreshToken: refreshToken,
+          },
+        );
+        return res;
+      }
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  getHashPassword(password: string) {
+    const salt = genSaltSync(10);
+    const hash = hashSync(password, salt);
+    return hash;
+  }
+
+  isValidPassword(password: string, hash: string) {
+    return compareSync(password, hash);
   }
 }
