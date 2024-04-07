@@ -17,10 +17,11 @@ const login = async (userLoginDto: UserLoginDto) => {
 
 const register = async (userRegisterDto: UserRegisterDto | undefined) => {
   try {
-    const res: AxiosResponse = await axiosInstance.post<IBackendRes<IUser>>(
+    const res = await axiosInstance.post<IBackendRes<IUser>>(
       "/auth/register",
       userRegisterDto
     );
+    console.log(res);
     return res;
   } catch (error) {
     console.log(error);

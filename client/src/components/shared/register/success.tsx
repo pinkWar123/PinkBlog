@@ -4,29 +4,19 @@ import { useNavigate } from "react-router-dom";
 import RegisterStateContext from "../../../context/register/RegisterContext";
 import { register } from "../../../services/authApi";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import UserStateContext from "../../../context/users/UserContext";
 
 const { Paragraph, Text } = Typography;
 
 const Success: React.FC = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState<boolean>(false);
   const [isSuccess, setSuccess] = useState<boolean>(true);
-  const { registerInfo, setRegisterInfo } = useContext(RegisterStateContext);
+  const { user } = useContext(UserStateContext);
   useEffect(() => {
-    const createAccount = async () => {
-      const res = await register(registerInfo);
-      console.log(registerInfo);
-      if (res?.data.statusCode === 201) {
-        setSuccess(true);
-      } else {
-        setSuccess(false);
-      }
-      setLoading(false);
-    };
-    createAccount();
-  }, [registerInfo]);
+    setSuccess(user ? false : true);
+  }, [user]);
   return (
-    <Skeleton loading={loading} active>
+    <>
       {isSuccess && (
         <Result
           status="success"
@@ -37,7 +27,7 @@ const Success: React.FC = () => {
               type="primary"
               key="console"
               onClick={() => {
-                navigate("/");
+                window.location.href = "/";
               }}
             >
               Back to home page
@@ -54,7 +44,7 @@ const Success: React.FC = () => {
             <Button
               key="buy"
               onClick={() => {
-                navigate("/");
+                window.location.href = "/";
               }}
             >
               Back to home page
@@ -84,7 +74,7 @@ const Success: React.FC = () => {
           </div>
         </Result>
       )}
-    </Skeleton>
+    </>
   );
 };
 

@@ -14,5 +14,6 @@ export interface UserRegisterDto {
 
 export type User = {
   username: string;
+  _id: string;
   //role
 };

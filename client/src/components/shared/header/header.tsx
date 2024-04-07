@@ -2,14 +2,28 @@ import {
   FileOutlined as FileOutlinedAntd,
   HistoryOutlined,
   InfoOutlined,
+  LoginOutlined,
   LogoutOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { Avatar, Divider, Menu, MenuProps, Popover, Space, Switch } from "antd";
+import {
+  Avatar,
+  Button,
+  Divider,
+  Menu,
+  MenuProps,
+  Popover,
+  Space,
+  Switch,
+} from "antd";
 import { Header } from "antd/es/layout/layout";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "./header.module.scss";
-import { fetchUser } from "../../../services";
+import UserStateContext from "../../../context/users/UserContext";
+import { useNavigate } from "react-router-dom";
+import { User } from "../../../types/auth";
+import { getUserInfo } from "../../../services/authApi";
+import { IUser } from "../../../types/backend";
 const leftMenuItems: MenuProps["items"] = [
   {
     key: 0,
@@ -76,42 +90,72 @@ const AvatarPopoverContent: React.FC<{ props: avatarPopoverProp[] }> = ({
   );
 };
 
-const rightMenuItems = [
-  {
-    key: `menu2-0`,
-    label: <InfoOutlined />,
-  },
-  {
-    key: `menu2-1`,
-    label: <Switch />,
-  },
-  {
-    key: `menu2-2`,
-    label: (
-      <Space wrap>
-        <Popover
-          content={
-            <AvatarPopoverContent
-              props={avatarPopoverProps}
-            ></AvatarPopoverContent>
-          }
-          trigger="click"
-        >
-          <Avatar>User</Avatar>
-        </Popover>
-      </Space>
-    ),
-  },
-];
-
-const MainHeader = () => {
+const MainHeader: React.FC = () => {
+  const [user, setUser] = useState<IUser | undefined>();
   useEffect(() => {
-    const fetchUserData = async () => {
-      const res = await fetchUser();
-      console.log(res);
+    const fetchUserRes = async () => {
+      const res = await getUserInfo();
+      if (res?.status === 200) {
+        const _user = res.data.data;
+        console.log(_user);
+        setUser(_user);
+      }
+      console.log(res?.data.data);
     };
-    fetchUserData();
+    fetchUserRes();
   }, []);
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    setCount((prev) => prev + 1);
+  }, []);
+  console.log(count);
+  const navigate = useNavigate();
+  const renderRightMenuItems = () => {
+    return [
+      {
+        key: `menu2-0`,
+        label: <InfoOutlined />,
+      },
+      {
+        key: "show-user",
+        label: <Button onClick={() => console.log(user)}>Show user</Button>,
+      },
+      {
+        key: `menu2-1`,
+        label: <Switch />,
+      },
+      {
+        key: `menu2-2`,
+        label: (
+          <>
+            {user ? (
+              <Popover
+                content={
+                  <AvatarPopoverContent
+                    props={avatarPopoverProps}
+                  ></AvatarPopoverContent>
+                }
+                trigger="click"
+              >
+                {user.profileImageUrl ? (
+                  <Avatar
+                    crossOrigin="anonymous"
+                    src={`http://localhost:8000/public/images/profile/${user.profileImageUrl}`}
+                  />
+                ) : (
+                  <Avatar>{user.username}</Avatar>
+                )}
+              </Popover>
+            ) : (
+              <div onClick={() => navigate("/auth")} style={{ width: "100%" }}>
+                <LoginOutlined /> Log in{" "}
+              </div>
+            )}
+          </>
+        ),
+      },
+    ];
+  };
   return (
     <Header
       style={{
@@ -139,8 +183,8 @@ const MainHeader = () => {
         theme="light"
         mode="horizontal"
         defaultSelectedKeys={["Bài viết"]}
-        items={rightMenuItems}
-        style={{ minWidth: 0, margin: "auto" }}
+        items={renderRightMenuItems()}
+        style={{ margin: "auto" }}
       />
     </Header>
   );

@@ -14,6 +14,8 @@ import ImgCrop from "antd-img-crop";
 import { uploadSingleFile } from "../../../services/uploadApi";
 import RegisterStateContext from "../../../context/register/RegisterContext";
 import { UserRegisterDto } from "../../../types/auth";
+import { register } from "../../../services/authApi";
+import UserStateContext from "../../../context/users/UserContext";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
@@ -39,6 +41,7 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
   const { registerInfo, setRegisterInfo } = useContext(RegisterStateContext);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [progress, setProgress] = useState<number>(0);
+  const { setUser } = useContext(UserStateContext);
   console.log(registerInfo);
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -128,7 +131,14 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
           </Button>
           <Button
             type="primary"
-            onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+            onClick={async (e: any) => {
+              const res = await register(registerInfo);
+              if (res?.status === 201) {
+                setUser(res.data.data);
+                const accessToken = res.data.data?.accessToken;
+                if (accessToken)
+                  localStorage.setItem("access_token", accessToken);
+              }
               onNext(e);
             }}
           >

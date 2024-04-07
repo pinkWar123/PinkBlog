@@ -10,9 +10,12 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "./auth.module.scss";
 import { UserLoginDto } from "../../types/auth";
 import login from "../../services/authApi";
+import { useContext } from "react";
+import UserStateContext from "../../context/users/UserContext";
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserStateContext);
   const onFinish = async (value: UserLoginDto) => {
     const res = await login({
       username: value.username,
@@ -21,9 +24,9 @@ const Auth: React.FC = () => {
 
     if (res?.status === 201) {
       const accessToken = res.data.data?.accessToken;
-      console.log(res);
       if (accessToken) localStorage.setItem("access_token", accessToken);
-      navigate("/");
+      setUser(res.data.data);
+      window.location.href = "/";
     }
     console.log(res?.data?.data);
   };
