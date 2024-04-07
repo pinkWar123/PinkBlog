@@ -1,25 +1,29 @@
 import {
-  Form,
+  Button,
   GetProp,
-  Modal,
+  Progress,
+  Space,
   Upload,
   UploadFile,
   UploadProps,
   message,
 } from "antd";
-import { useState } from "react";
-import { NextButton, PreviousButton, UploadButton } from "./buttons";
+import { useContext, useState } from "react";
 import { DoubleProps } from "../../../pages/auth/register";
+import ImgCrop from "antd-img-crop";
+import { uploadSingleFile } from "../../../services/uploadApi";
+import RegisterStateContext from "../../../context/register/RegisterContext";
+import { UserRegisterDto } from "../../../types/auth";
+import { register } from "../../../services/authApi";
+import UserStateContext from "../../../context/users/UserContext";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
-const getBase64 = (file: FileType): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
+const getBase64 = (img: FileType, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
 
 const beforeUpload = (file: FileType) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -34,69 +38,114 @@ const beforeUpload = (file: FileType) => {
 };
 
 const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
-  const [loading, setLoading] = useState<Boolean>(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewTitle, setPreviewTitle] = useState("");
-  const [imageUrl, setImageUrl] = useState<string>();
-  const handlePreview = async (file: UploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj as FileType);
-    }
-
-    setPreviewImage(file.url || (file.preview as string));
-    setPreviewOpen(true);
-    setPreviewTitle(
-      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
-    );
+  const { registerInfo, setRegisterInfo } = useContext(RegisterStateContext);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [progress, setProgress] = useState<number>(0);
+  const { setUser } = useContext(UserStateContext);
+  console.log(registerInfo);
+  const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
   };
 
-  const handleCancel = () => setPreviewOpen(false);
+  const onPreview = async (file: UploadFile) => {
+    let src = file.url as string;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as FileType);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
+
+  const handleUploadPhoto = async (options: any) => {
+    const { onSuccess, onError, file, onProgress } = options;
+    const config = {
+      headers: {
+        "content-type": "multipart/form-data",
+        folder_type: "profile",
+      },
+      onUploadProgress: (event: any) => {
+        const percent = Math.floor((event.loaded / event.total) * 100);
+        setProgress(percent);
+        if (percent === 100) {
+          setTimeout(() => setProgress(0), 1000);
+        }
+        onProgress({ percent: (event.loaded / event.total) * 100 });
+      },
+    };
+    try {
+      const res = await uploadSingleFile(file, config);
+      onSuccess("Ok");
+      const fileName: string | undefined = res?.data?.data?.fileName;
+      console.log(fileName);
+      setRegisterInfo((user: UserRegisterDto | undefined) => {
+        if (!user) return user;
+        return {
+          ...user,
+          profileImageUrl: fileName,
+        };
+      });
+    } catch (error) {
+      onError(error);
+    }
+  };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <h1>Upload your profile picture!</h1>
-      <Form onFinish={(value) => onNext()}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginLeft: "24px",
-          }}
-        >
+    <div style={{ display: "flex" }}>
+      <div>
+        <h1 style={{ textAlign: "center" }}>Upload your profile photo</h1>
+        <h4 style={{ textAlign: "center" }}>You can skip it</h4>
+      </div>
+      <div>
+        <ImgCrop rotationSlider>
           <Upload
-            style={{ marginLeft: "300px" }}
-            name="avatar"
-            maxCount={1}
-            multiple={false}
+            accept="image/*"
             listType="picture-card"
-            onPreview={handlePreview}
+            customRequest={handleUploadPhoto}
+            defaultFileList={fileList}
+            onChange={onChange}
+            onPreview={onPreview}
             beforeUpload={beforeUpload}
+            maxCount={1}
           >
-            <div style={{}}>
-              <UploadButton />
-            </div>
+            {fileList.length < 5 && "+ Upload"}
           </Upload>
-          <Modal
-            open={previewOpen}
-            title={previewTitle}
-            footer={null}
-            onCancel={handleCancel}
-          >
-            <img alt="example" style={{ width: "100%" }} src={previewImage} />
-          </Modal>
-          <div
-            style={{
-              display: "flex",
-              marginLeft: "36px",
-              alignItems: "center",
+        </ImgCrop>
+        {progress > 0 ? <Progress percent={progress} /> : null}
+        <Space>
+          <Button
+            onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+              setRegisterInfo((prev: UserRegisterDto | undefined) => {
+                if (!prev) return prev;
+                return { ...prev, profileImageUrl: undefined };
+              });
+              onPrev(e);
             }}
           >
-            <NextButton />
-            <PreviousButton />
-          </div>
-        </div>
-      </Form>
+            Previous
+          </Button>
+          <Button
+            type="primary"
+            onClick={async (e: any) => {
+              const res = await register(registerInfo);
+              if (res?.status === 201) {
+                setUser(res.data.data);
+                const accessToken = res.data.data?.accessToken;
+                if (accessToken)
+                  localStorage.setItem("access_token", accessToken);
+              }
+              onNext(e);
+            }}
+          >
+            Next
+          </Button>
+        </Space>
+      </div>
     </div>
   );
 };

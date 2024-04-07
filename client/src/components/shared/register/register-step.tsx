@@ -4,7 +4,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Steps } from "antd";
-
+import styles from "./register.module.scss";
 type IProps = {
   current: number;
 };
@@ -29,7 +29,8 @@ export const items = [
 const RegisterSteps: React.FC<IProps> = ({ current }) => {
   return (
     <Steps
-      style={{ position: "absolute", width: "50%", marginTop: "100px" }}
+      size="small"
+      className={styles["step"]}
       current={current}
       items={items}
     />

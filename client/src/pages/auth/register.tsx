@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { RegisterSteps } from "../../components/shared";
 import {
   ProfileUpload,
@@ -6,6 +6,7 @@ import {
   UserInfo,
 } from "../../components/shared/register";
 import { Card } from "antd";
+import { RegisterContextProvider } from "../../context/register";
 
 const Register: React.FC = () => {
   const [current, setCurrent] = useState<number>(0);
@@ -38,11 +39,23 @@ const Register: React.FC = () => {
         style={{
           margin: "auto",
           alignContent: "center",
-          width: "35%",
+          width: "50%",
           minWidth: "400px",
+          marginTop: "200px",
         }}
       >
-        <Card>{renderRegisterContent(current)}</Card>
+        <Card
+          style={{
+            margin: "auto",
+            alignContent: "center",
+            width: "100%",
+            minWidth: "400px",
+          }}
+        >
+          <RegisterContextProvider>
+            {renderRegisterContent(current)}
+          </RegisterContextProvider>
+        </Card>
       </div>
     </div>
   );
@@ -55,6 +68,6 @@ export type SingleProps = {
 };
 
 export type DoubleProps = {
-  onNext: Function;
-  onPrev: Function;
+  onNext: MouseEventHandler<HTMLElement>;
+  onPrev: MouseEventHandler<HTMLElement>;
 };

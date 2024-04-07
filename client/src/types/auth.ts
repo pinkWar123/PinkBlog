@@ -3,7 +3,17 @@ export type UserLoginDto = {
   password: string;
 };
 
+export interface UserRegisterDto {
+  username: string;
+  password: string;
+  email?: string;
+  description?: string;
+  age: number;
+  profileImageUrl?: string;
+}
+
 export type User = {
   username: string;
+  _id: string;
   //role
 };

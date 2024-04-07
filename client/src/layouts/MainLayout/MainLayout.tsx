@@ -1,4 +1,4 @@
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactElement, ReactNode, useContext, useEffect } from "react";
 import {
   Layout,
   Flex,
@@ -12,6 +12,8 @@ import {
 import { Outlet } from "react-router-dom";
 import { MainHeader } from "../../components/shared";
 import styles from "./MainLayout.module.scss";
+import UserStateContext from "../../context/users/UserContext";
+import { getUserInfo } from "../../services/authApi";
 const { Header, Footer, Sider, Content } = Layout;
 
 const headerStyle: React.CSSProperties = {
@@ -51,19 +53,23 @@ const layoutStyle = {
   maxWidth: "calc(50% - 8px)",
 };
 
-const MainLayout = () => (
-  <Layout className={styles["layout"]}>
-    <MainHeader />
-    <Layout>
-      <Content>
-        <Outlet />
-      </Content>
-      <Sider width="25%" style={siderStyle} className={styles["sider"]}>
-        Sider
-      </Sider>
+const MainLayout: React.FC = () => {
+  const { user, setUser } = useContext(UserStateContext);
+  console.log(user);
+  return (
+    <Layout className={styles["layout"]}>
+      <MainHeader />
+      <Layout>
+        <Content>
+          <Outlet />
+        </Content>
+        <Sider width="25%" style={siderStyle} className={styles["sider"]}>
+          Sider
+        </Sider>
+      </Layout>
+      <Footer style={footerStyle}>Footer</Footer>
     </Layout>
-    <Footer style={footerStyle}>Footer</Footer>
-  </Layout>
-);
+  );
+};
 
 export default MainLayout;

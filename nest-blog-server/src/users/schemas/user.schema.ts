@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+
+export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
@@ -13,7 +15,10 @@ export class User {
   username: string;
 
   @Prop()
-  profileImage?: string;
+  age: number;
+
+  @Prop()
+  profileImageUrl?: string;
 
   @Prop()
   description?: string;

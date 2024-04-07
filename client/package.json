@@ -12,7 +12,9 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "antd": "^5.15.3",
+    "antd-img-crop": "^4.21.0",
     "axios": "^1.6.8",
+    "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.3",
@@ -45,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.0",
     "sass": "^1.72.0",
     "sass-loader": "^14.1.1",
     "webpack": "^5.90.3"
