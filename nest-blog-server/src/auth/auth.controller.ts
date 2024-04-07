@@ -44,7 +44,8 @@ export class AuthController {
   @Get('account')
   @ResponseMessage("This api returns user's information by access token")
   async getUserAccount(@User() user: IUser) {
-    return { user };
+    console.log(user);
+    return user;
   }
 
   @Public()

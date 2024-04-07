@@ -32,7 +32,7 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     credentials: true,
   });
-
+  app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
   // Config api v1
   app.setGlobalPrefix('api');
   app.enableVersioning({ type: VersioningType.URI, defaultVersion: ['1'] });

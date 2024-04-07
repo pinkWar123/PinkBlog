@@ -52,24 +52,24 @@ export class UserRegisterDto {
   })
   password: string;
 
+  @IsOptional()
   @IsEmail(
     {},
     {
       message: 'Your email is not valid',
     },
   )
-  @IsOptional()
   @ApiProperty({
     example: 'john@gmail.com',
     description: "Enter user's email so that we can send you notification",
   })
   email?: string;
 
+  @IsOptional()
   @IsString({ message: 'Description must be a string' })
   @MaxLength(100, {
     message: 'Description must contain at most 100 characters',
   })
-  @IsOptional()
   description?: string;
 
   @ApiProperty({
@@ -80,8 +80,8 @@ export class UserRegisterDto {
   @Min(1, { message: 'Please enter a positive number' })
   age: number;
 
-  @IsString({ message: 'Profile image url must be a string' })
   @IsOptional()
+  @IsString({ message: 'Profile image url must be a string' })
   @ApiProperty({
     description:
       "This is the profile image url. User's profile image can be retrieved in profile folder",
