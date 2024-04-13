@@ -11,6 +11,8 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { UploadModule } from './upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { TagsModule } from './tags/tags.module';
+import { PostsModule } from './posts/posts.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -32,6 +34,8 @@ import { join } from 'path';
     AuthModule,
     UsersModule,
     UploadModule,
+    TagsModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [

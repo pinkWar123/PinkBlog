@@ -1,33 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { User } from 'src/decorators/user';
 
-export type UserDocument = HydratedDocument<User>;
+export type TagDocument = HydratedDocument<Tag>;
 
 @Schema({ timestamps: true })
-export class User {
+export class Tag {
   @Prop()
-  email?: string;
-
-  @Prop()
-  password: string;
-
-  @Prop()
-  username: string;
-
-  @Prop()
-  age: number;
-
-  @Prop()
-  profileImageUrl?: string;
-
-  @Prop()
-  description?: string;
-
-  @Prop()
-  role?: mongoose.Schema.Types.ObjectId;
-
-  @Prop()
-  refreshToken?: string;
+  value: string;
 
   @Prop()
   createdAt: Date;
@@ -48,4 +28,4 @@ export class User {
   deletedBy: mongoose.Types.ObjectId;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const TagSchema = SchemaFactory.createForClass(Tag);
