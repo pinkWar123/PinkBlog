@@ -54,8 +54,6 @@ const layoutStyle = {
 };
 
 const MainLayout: React.FC = () => {
-  const { user, setUser } = useContext(UserStateContext);
-  console.log(user);
   return (
     <Layout className={styles["layout"]}>
       <MainHeader />

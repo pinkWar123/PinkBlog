@@ -7,6 +7,8 @@ import AuthLayout from "./layouts/AuthLayout";
 import { useContext, useEffect } from "react";
 import UserStateContext, { UserContextType } from "./context/users/UserContext";
 import { getUserInfo } from "./services/authApi";
+import EditLayout from "./pages/EditLayout/EditLayout";
+import Profile from "./pages/Profile";
 
 export default function App() {
   const { user, setUser } = useContext(UserStateContext);
@@ -22,7 +24,6 @@ export default function App() {
     };
     fetchUserRes();
   }, [setUser]);
-  console.log(user);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -42,6 +43,16 @@ export default function App() {
         { path: "/auth", element: <Auth /> },
         { path: "/auth/register", element: <Register /> },
       ],
+    },
+    {
+      path: "/edit",
+      element: <EditLayout />,
+      errorElement: <NotFound />,
+    },
+    {
+      path: "/profile",
+      element: <Profile />,
+      errorElement: <NotFound />,
     },
   ]);
   return (

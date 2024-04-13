@@ -32,19 +32,6 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    // if (!modalShown && error.response.status === 401) {
-    //   modalShown = true;
-    //   // Unauthorized error: show modal to prompt user to log in
-    //   Modal.error({
-    //     title: "Unauthorized",
-    //     content: "Please log in to access this content.",
-    //     onOk: () => {
-    //       modalShown = false;
-    //       globalNavigate("/auth/login");
-    //       // Redirect user to login page or perform any other action
-    //     },
-    //   });
-    // }
     return Promise.reject(error);
   }
 );
