@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import UserStateContext from "../../context/users/UserContext";
 import { useContext, useEffect, useState } from "react";
-import { Avatar, Tag } from "antd";
+import { Avatar, Pagination, Tag } from "antd";
 import { IPost } from "../../types/backend";
 import { fetchPostById } from "../../services/postsApi";
 import styles from "./PostPage.module.scss";

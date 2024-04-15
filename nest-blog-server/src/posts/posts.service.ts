@@ -55,7 +55,7 @@ export class PostsService {
     try {
       const { filter, population, projection } = aqp(qs);
       const { sort }: { sort: any } = aqp(qs);
-      const totalItems = await this.postModel.count(filter);
+      const totalItems = await this.postModel.count({});
       const totalPages = Math.ceil(totalItems / pageSize);
       const calculatedSkip = (current - 1) * pageSize;
       delete filter.pageSize;

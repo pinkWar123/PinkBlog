@@ -12,6 +12,12 @@ import Profile from "./pages/Profile";
 import { IUser } from "./types/backend";
 import { MainHeader } from "./components/shared";
 import { Layout } from "antd";
+import {
+  ContentCreator,
+  Following,
+  Latest,
+  Series,
+} from "./pages/HomePage/Latest";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -34,7 +40,12 @@ export default function App() {
         <UserStateContext.Provider value={{ user, setUser }}>
           <Routes>
             <Route path="/" element={<MainLayout></MainLayout>}>
-              <Route index element={<HomePage />} />
+              <Route element={<HomePage />}>
+                <Route path="latest" element={<Latest />} />
+                <Route path="following" element={<Following />} />
+                <Route path="series" element={<Series />} />
+                <Route path="content-creator" element={<ContentCreator />} />
+              </Route>
               <Route path="posts/:id" element={<PostPage />} />
               <Route path="*" element={<NotFound />} />
             </Route>

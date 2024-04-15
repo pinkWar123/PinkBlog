@@ -44,6 +44,26 @@ const fetchPublicPosts = async (current: number = 0, pageSize: number = 10) => {
   }
 };
 
+const fetchLatestPosts = async (current: number = 0, pageSize: number = 10) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+      "posts?sort=-createdAt",
+      {
+        params: {
+          current,
+          pageSize,
+        },
+      }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error?.message,
+    });
+  }
+};
+
 const fetchPostById = async (id: string) => {
   try {
     const res = await axiosInstance.get<IBackendRes<IPost>>(`posts/${id}`);
@@ -57,4 +77,4 @@ const fetchPostById = async (id: string) => {
   }
 };
 
-export { createPost, fetchPublicPosts, fetchPostById };
+export { createPost, fetchPublicPosts, fetchPostById, fetchLatestPosts };
