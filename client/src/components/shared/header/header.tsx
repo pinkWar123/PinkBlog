@@ -161,28 +161,44 @@ const MainHeader: React.FC = () => {
         zIndex: 1,
         backgroundColor: "#fff",
         display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
         margin: "auto",
       }}
     >
-      <div style={{ color: "red", paddingRight: "64px" }}>Blogger</div>
-      {/* <Space size="large" style={{ marginLeft: "50px" }}> */}
-      <Menu
-        theme="light"
-        mode="horizontal"
-        defaultSelectedKeys={["Bài viết"]}
-        items={leftMenuItems}
-        style={{ flex: 1, minWidth: 0 }}
-      />
-
-      <Menu
-        theme="light"
-        mode="horizontal"
-        defaultSelectedKeys={["Bài viết"]}
-        items={renderRightMenuItems()}
-        style={{ margin: "auto" }}
-      />
+      <Space size={"large"}>
+        <div style={{ color: "red", paddingRight: "32px", flexShrink: "0" }}>
+          Blogger
+        </div>
+        <div>Bài viết 1</div>
+        <div>Hỏi đáp</div>
+      </Space>
+      <Space>
+        {user ? (
+          <Popover
+            content={
+              <AvatarPopoverContent
+                props={avatarPopoverProps}
+              ></AvatarPopoverContent>
+            }
+            trigger="click"
+          >
+            {user.profileImageUrl ? (
+              <Avatar
+                crossOrigin="anonymous"
+                src={`http://localhost:8000/public/images/profile/${user.profileImageUrl}`}
+              />
+            ) : (
+              <Avatar>{user.username}</Avatar>
+            )}
+          </Popover>
+        ) : (
+          <div onClick={() => navigate("/auth")} style={{ width: "100%" }}>
+            <LoginOutlined /> Log in{" "}
+          </div>
+        )}
+      </Space>
     </Header>
   );
 };

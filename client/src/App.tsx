@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { MainLayout } from "./layouts";
 import NotFound from "./components/shared/not-found";
 import "./App.css";
@@ -39,7 +39,8 @@ export default function App() {
       <BrowserRouter>
         <UserStateContext.Provider value={{ user, setUser }}>
           <Routes>
-            <Route path="/" element={<MainLayout></MainLayout>}>
+            <Route path="/" element={<Navigate to={"/latest"} />} />
+            <Route element={<MainLayout></MainLayout>}>
               <Route element={<HomePage />}>
                 <Route path="latest" element={<Latest />} />
                 <Route path="following" element={<Following />} />

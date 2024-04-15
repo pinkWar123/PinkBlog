@@ -12,6 +12,7 @@ import "quill-emoji/dist/quill-emoji.css";
 
 import { TOOLBAR_OPTIONS } from "./toolbarOption";
 import UserAvatar from "../../components/shared/Avatar";
+import { EditOutlined, StarOutlined, UserAddOutlined } from "@ant-design/icons";
 
 Quill.register("modules/emoji", Emoji);
 
@@ -20,6 +21,23 @@ const PostPage: React.FC = () => {
   const [comment, setComment] = useState<string>("");
   const [post, setPost] = useState<IPost | undefined>();
   const { user } = useContext(UserStateContext);
+  const [showSideAvatar, setShowSideAvatar] = useState<boolean>(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        // Change 100 to the scroll position where you want the avatar to stick
+        setShowSideAvatar(true);
+      } else {
+        setShowSideAvatar(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   useEffect(() => {
     const fetchPost = async () => {
       if (!id) return;
@@ -33,10 +51,30 @@ const PostPage: React.FC = () => {
   return (
     <>
       <div className={styles["avatar-wrapper"]}>
-        <Avatar src={user?.profileImageUrl} size={40} />
+        {showSideAvatar && <Avatar src={user?.profileImageUrl} size={40} />}
       </div>
       <div className={styles["container"]}>
         <div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ display: "flex" }}>
+              <Avatar src={user?.profileImageUrl} size={40} />
+              <div style={{ marginLeft: "24px" }}>
+                <a>{user?.username}</a>
+                <div style={{ display: "flex", marginTop: "8px" }}>
+                  <div style={{ paddingRight: "12px" }}>
+                    <StarOutlined /> 42
+                  </div>
+                  <div style={{ paddingRight: "12px" }}>
+                    <UserAddOutlined /> 1
+                  </div>
+                  <div style={{ paddingRight: "12px" }}>
+                    <EditOutlined /> 2
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>Đã đăng vào khoảng 22 giờ trước - 12 phút đọc</div>
+          </div>
           <h1 className={styles["title"]}>{post?.title}</h1>
           <div
             style={{ maxWidth: "100%" }}
