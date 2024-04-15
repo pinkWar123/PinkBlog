@@ -1,5 +1,5 @@
 import { Modal } from "antd";
-import { IBackendRes, IPost } from "../types/backend";
+import { IBackendRes, IPagination, IPost } from "../types/backend";
 import axiosInstance from "./config";
 
 const createPost = async (
@@ -19,9 +19,62 @@ const createPost = async (
   } catch (error: Error | any) {
     console.log(error);
     Modal.error({
-      title: error.message,
+      title: error?.message,
     });
   }
 };
 
-export { createPost };
+const fetchPublicPosts = async (current: number = 0, pageSize: number = 10) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+      "posts?populate=createdBy,tags",
+      {
+        params: {
+          current,
+          pageSize,
+        },
+      }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error?.message,
+    });
+  }
+};
+
+const fetchLatestPosts = async (current: number = 0, pageSize: number = 10) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+      "posts?sort=-createdAt",
+      {
+        params: {
+          current,
+          pageSize,
+        },
+      }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error?.message,
+    });
+  }
+};
+
+const fetchPostById = async (id: string) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPost>>(`posts/${id}`);
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error?.message,
+    });
+    return null;
+  }
+};
+
+export { createPost, fetchPublicPosts, fetchPostById, fetchLatestPosts };

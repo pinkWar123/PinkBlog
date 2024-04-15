@@ -1,23 +1,17 @@
 import { Button, ConfigProvider, Tabs, TabsProps } from "antd";
 import React from "react";
-import styles from "../styles/content-nav.module.scss";
-import { PostItem } from "../components/shared";
-import { DownloadOutlined, EditOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { EditOutlined } from "@ant-design/icons";
+import { Outlet, useNavigate } from "react-router-dom";
+import TabPane from "antd/es/tabs/TabPane";
 
-const onChange = (key: string) => console.log(key);
-
-const Post: React.FC = () => {
+const HomePage: React.FC = () => {
   const navigate = useNavigate();
+
+  const onChange = (key: string) => navigate(`/${key}`);
   const items: TabsProps["items"] = [
     {
       key: "content-creator",
       label: "NHÀ SÁNG TẠO NỘI DUNG",
-      children: (
-        <div>
-          <PostItem />
-        </div>
-      ),
     },
     {
       key: "following",
@@ -64,14 +58,35 @@ const Post: React.FC = () => {
       >
         <Tabs
           defaultActiveKey="1"
-          items={items}
           onChange={onChange}
-          //className={styles["nav"]}
+          // className={styles["nav"]}
+          style={{ width: "100%" }}
           centered
-        />
+        >
+          {items.map((item, index) => (
+            <TabPane tab={item.label} key={item.key} style={{ width: "100%" }}>
+              {/* {item.children} */}
+            </TabPane>
+          ))}
+        </Tabs>
       </ConfigProvider>
+      <Outlet />
+      {/* <div
+        style={{
+          backgroundColor: "white",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Space>
+          <div>Nhà sáng tạo nội dung</div>
+          <div>Đang theo dõi</div>
+          <div>Mới nhất</div>
+          <div>Series</div>
+        </Space>
+      </div> */}
     </>
   );
 };
 
-export default Post;
+export default HomePage;

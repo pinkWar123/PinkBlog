@@ -37,12 +37,14 @@ export interface ITag {
 }
 
 export interface IPost {
+  _id: string;
   title: string;
-  content: string;
+  content?: string;
   tags: ITag[];
-  author: {
-    name: string;
+  createdBy: {
+    username: string;
     _id: string;
+    profileImageUrl?: string;
   };
   createdAt: Date;
   updatedAt: Date;

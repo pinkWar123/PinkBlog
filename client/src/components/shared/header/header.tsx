@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../../types/auth";
 import { getUserInfo } from "../../../services/authApi";
 import { IUser } from "../../../types/backend";
+import { UserStateProvider } from "../../../context";
 const leftMenuItems: MenuProps["items"] = [
   {
     key: 0,
@@ -91,24 +92,20 @@ const AvatarPopoverContent: React.FC<{ props: avatarPopoverProp[] }> = ({
 };
 
 const MainHeader: React.FC = () => {
-  const [user, setUser] = useState<IUser | undefined>();
-  useEffect(() => {
-    const fetchUserRes = async () => {
-      const res = await getUserInfo();
-      if (res?.status === 200) {
-        const _user = res.data.data;
-        console.log(_user);
-        setUser(_user);
-      }
-      console.log(res?.data.data);
-    };
-    fetchUserRes();
-  }, []);
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    setCount((prev) => prev + 1);
-  }, []);
-  console.log(count);
+  // const [user, setUser] = useState<IUser | undefined>();
+  // useEffect(() => {
+  //   const fetchUserRes = async () => {
+  //     const res = await getUserInfo();
+  //     if (res?.status === 200) {
+  //       const _user = res.data.data;
+  //       console.log(_user);
+  //       setUser(_user);
+  //     }
+  //     console.log(res?.data.data);
+  //   };
+  //   fetchUserRes();
+  // }, []);
+  const { user } = useContext(UserStateContext);
   const navigate = useNavigate();
   const renderRightMenuItems = () => {
     return [
@@ -164,28 +161,44 @@ const MainHeader: React.FC = () => {
         zIndex: 1,
         backgroundColor: "#fff",
         display: "flex",
+        justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
         margin: "auto",
       }}
     >
-      <div style={{ color: "red", paddingRight: "64px" }}>Blogger</div>
-      {/* <Space size="large" style={{ marginLeft: "50px" }}> */}
-      <Menu
-        theme="light"
-        mode="horizontal"
-        defaultSelectedKeys={["Bài viết"]}
-        items={leftMenuItems}
-        style={{ flex: 1, minWidth: 0 }}
-      />
-
-      <Menu
-        theme="light"
-        mode="horizontal"
-        defaultSelectedKeys={["Bài viết"]}
-        items={renderRightMenuItems()}
-        style={{ margin: "auto" }}
-      />
+      <Space size={"large"}>
+        <div style={{ color: "red", paddingRight: "32px", flexShrink: "0" }}>
+          Blogger
+        </div>
+        <div>Bài viết 1</div>
+        <div>Hỏi đáp</div>
+      </Space>
+      <Space>
+        {user ? (
+          <Popover
+            content={
+              <AvatarPopoverContent
+                props={avatarPopoverProps}
+              ></AvatarPopoverContent>
+            }
+            trigger="click"
+          >
+            {user.profileImageUrl ? (
+              <Avatar
+                crossOrigin="anonymous"
+                src={`http://localhost:8000/public/images/profile/${user.profileImageUrl}`}
+              />
+            ) : (
+              <Avatar>{user.username}</Avatar>
+            )}
+          </Popover>
+        ) : (
+          <div onClick={() => navigate("/auth")} style={{ width: "100%" }}>
+            <LoginOutlined /> Log in{" "}
+          </div>
+        )}
+      </Space>
     </Header>
   );
 };
