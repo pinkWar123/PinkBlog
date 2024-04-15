@@ -35,19 +35,6 @@ export class TagsService {
   }
 
   async findAll(pageSize: number, qs: string) {
-    // try {
-    //   const res = await this.tagModel.find().limit(result);
-    //   if (res && res.length > 0) {
-    //     const tags = res.map((tag) => ({
-    //       value: tag.value,
-    //       _id: tag._id,
-    //     }));
-    //     return tags;
-    //   }
-    //   return [];
-    // } catch (error) {
-    //   throw new BadRequestException(error.message);
-    // }
     try {
       const { filter, population, projection } = aqp(qs);
       const { sort }: { sort: any } = aqp(qs);

@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { User } from "../../../types/auth";
 import { getUserInfo } from "../../../services/authApi";
 import { IUser } from "../../../types/backend";
+import { UserStateProvider } from "../../../context";
 const leftMenuItems: MenuProps["items"] = [
   {
     key: 0,
@@ -91,24 +92,20 @@ const AvatarPopoverContent: React.FC<{ props: avatarPopoverProp[] }> = ({
 };
 
 const MainHeader: React.FC = () => {
-  const [user, setUser] = useState<IUser | undefined>();
-  useEffect(() => {
-    const fetchUserRes = async () => {
-      const res = await getUserInfo();
-      if (res?.status === 200) {
-        const _user = res.data.data;
-        console.log(_user);
-        setUser(_user);
-      }
-      console.log(res?.data.data);
-    };
-    fetchUserRes();
-  }, []);
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    setCount((prev) => prev + 1);
-  }, []);
-  console.log(count);
+  // const [user, setUser] = useState<IUser | undefined>();
+  // useEffect(() => {
+  //   const fetchUserRes = async () => {
+  //     const res = await getUserInfo();
+  //     if (res?.status === 200) {
+  //       const _user = res.data.data;
+  //       console.log(_user);
+  //       setUser(_user);
+  //     }
+  //     console.log(res?.data.data);
+  //   };
+  //   fetchUserRes();
+  // }, []);
+  const { user } = useContext(UserStateContext);
   const navigate = useNavigate();
   const renderRightMenuItems = () => {
     return [

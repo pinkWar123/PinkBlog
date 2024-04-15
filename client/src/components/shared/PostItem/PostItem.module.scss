@@ -4,7 +4,8 @@
   .post-title {
     font-size: 18px;
   }
-
+  flex: 1;
+  width: 85%;
   .post-tag {
     font-size: 12px;
   }
@@ -12,6 +13,7 @@
 
 @media screen and (max-width: 768px) {
   .post-item {
+    width: 100%;
     /* Adjust styles for smaller screens */
     .post-title {
       font-size: 12px;

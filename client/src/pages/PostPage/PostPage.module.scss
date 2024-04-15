@@ -1,0 +1,25 @@
+.container {
+  width: 85% !important;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20px;
+  .title {
+    font-size: 40px;
+  }
+  .content {
+    font-size: 16px;
+    img {
+      max-width: 100%;
+    }
+  }
+}
+
+.avatar-wrapper {
+  position: fixed;
+  margin-left: -80px;
+
+  :hover {
+    cursor: pointer;
+  }
+}

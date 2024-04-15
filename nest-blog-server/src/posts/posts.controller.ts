@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -14,6 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
+import { Public } from 'src/decorators/public';
 
 @ApiTags('posts')
 @Controller('posts')
@@ -26,14 +28,22 @@ export class PostsController {
     return this.postsService.create(createPostDto, user);
   }
 
+  @Public()
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  @ResponseMessage('This API returns a list of posts')
+  findAll(
+    @Query('pageSize') result: string,
+    @Query('current') current: number,
+    @Query() qs: string,
+  ) {
+    return this.postsService.findAll(+result, +current, qs);
   }
 
+  @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  @ResponseMessage('This API returns a post by ID')
+  findPostById(@Param('id') id: string) {
+    return this.postsService.findPostById(id);
   }
 
   @Patch(':id')

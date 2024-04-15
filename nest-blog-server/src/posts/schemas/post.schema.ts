@@ -39,7 +39,11 @@ export class Post {
   @Prop()
   deletedAt: Date;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: User.name })
+  @Prop({
+    type: mongoose.Types.ObjectId,
+    ref: User.name,
+    select: '_id username',
+  })
   createdBy: mongoose.Types.ObjectId;
 
   @Prop({ type: mongoose.Types.ObjectId, ref: User.name })

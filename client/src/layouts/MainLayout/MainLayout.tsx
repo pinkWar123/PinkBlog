@@ -1,4 +1,10 @@
-import React, { ReactElement, ReactNode, useContext, useEffect } from "react";
+import React, {
+  ReactElement,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   Layout,
   Flex,
@@ -8,12 +14,16 @@ import {
   Switch,
   Avatar,
   Popover,
+  Divider,
 } from "antd";
 import { Outlet } from "react-router-dom";
 import { MainHeader } from "../../components/shared";
 import styles from "./MainLayout.module.scss";
 import UserStateContext from "../../context/users/UserContext";
 import { getUserInfo } from "../../services/authApi";
+import { UserStateProvider } from "../../context";
+import { IPost } from "../../types/backend";
+import { fetchPublicPosts } from "../../services/postsApi";
 const { Header, Footer, Sider, Content } = Layout;
 
 const headerStyle: React.CSSProperties = {
@@ -35,9 +45,14 @@ const contentStyle: React.CSSProperties = {
 
 const siderStyle: React.CSSProperties = {
   textAlign: "center",
-  lineHeight: "120px",
-  color: "#fff",
-  backgroundColor: "#1677ff",
+  overflow: "auto",
+  height: "100vh",
+  position: "fixed",
+  right: "2%",
+  top: 140,
+  bottom: 0,
+  // marginLeft: "800px",
+  backgroundColor: "transparent",
 };
 
 const footerStyle: React.CSSProperties = {
@@ -54,15 +69,52 @@ const layoutStyle = {
 };
 
 const MainLayout: React.FC = () => {
+  const [topPosts, setTopPosts] = useState<IPost[] | undefined>([]);
+  useEffect(() => {
+    const fetchTopPosts = async () => {
+      const res = await fetchPublicPosts(0, 3);
+      if (res?.status === 200) {
+        setTopPosts(res.data.data?.result);
+      }
+    };
+    fetchTopPosts();
+  }, []);
   return (
-    <Layout className={styles["layout"]}>
+    <Layout>
       <MainHeader />
-      <Layout>
-        <Content>
-          <Outlet />
-        </Content>
-        <Sider width="25%" style={siderStyle} className={styles["sider"]}>
-          Sider
+      <Layout className={styles["layout"]}>
+        <Layout>
+          <Content>
+            <Outlet />
+          </Content>
+        </Layout>
+        <Sider style={siderStyle} className={styles["sider"]} width="20%">
+          <div style={{ display: "flex" }}>
+            <div>Bài viết nổi bật</div>
+
+            <div
+              style={{
+                flex: 1,
+                border: "1px solid #eee",
+                height: "1px",
+                marginTop: "7px",
+              }}
+            ></div>
+          </div>
+          <div style={{ textAlign: "left", marginTop: "20px" }}>
+            {topPosts &&
+              topPosts.length > 0 &&
+              topPosts.map((topPost) => (
+                <div>
+                  <a
+                    href={`http://localhost:3000/posts/${topPost._id}`}
+                    style={{ lineHeight: "20px" }}
+                  >
+                    {topPost.title}
+                  </a>
+                </div>
+              ))}
+          </div>
         </Sider>
       </Layout>
       <Footer style={footerStyle}>Footer</Footer>

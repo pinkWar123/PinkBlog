@@ -1,4 +1,4 @@
-import { Auth, Post } from "../pages";
+import { Auth, HomePage } from "../pages";
 
 interface routesProps {
   path: string;
@@ -12,7 +12,7 @@ export const publicRoutes: routesProps[] = [
   },
   {
     path: "/",
-    component: <Post />,
+    component: <HomePage />,
   },
 ];
 
