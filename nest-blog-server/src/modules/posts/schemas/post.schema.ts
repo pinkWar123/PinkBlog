@@ -2,19 +2,20 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, SchemaTypes } from 'mongoose';
 import { Tag, TagDocument } from '@modules/tags/schemas/tag.schema';
 import { User } from '@modules/users/schemas/user.schema';
+import { BaseEntity } from '@modules/shared/base/base.schema';
 
 export type PostDocument = HydratedDocument<Post>;
 
 @Schema({ timestamps: true })
-export class Post {
-  @Prop()
+export class Post extends BaseEntity {
+  @Prop({ required: true, minlength: 100 })
   content: string;
 
-  @Prop()
+  @Prop({ required: true, minlength: 10, maxlength: 100 })
   title: string;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: Tag.name })
-  tags: mongoose.Schema.Types.ObjectId[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Tag.name }] })
+  tags: Tag[];
 
   @Prop({
     type: String,
@@ -29,28 +30,6 @@ export class Post {
     },
   })
   access: string;
-
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
-
-  @Prop()
-  deletedAt: Date;
-
-  @Prop({
-    type: mongoose.Types.ObjectId,
-    ref: User.name,
-    select: '_id username',
-  })
-  createdBy: mongoose.Types.ObjectId;
-
-  @Prop({ type: mongoose.Types.ObjectId, ref: User.name })
-  updatedBy: mongoose.Types.ObjectId;
-
-  @Prop({ type: mongoose.Types.ObjectId, ref: User.name })
-  deletedBy: mongoose.Types.ObjectId;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

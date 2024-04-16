@@ -1,3 +1,4 @@
+import { BaseEntity } from '@modules/shared/base/base.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
 import mongoose, { HydratedDocument } from 'mongoose';
@@ -6,23 +7,30 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
 export class User {
-  @Prop()
+  @Prop({
+    required: true,
+    unique: true,
+    match: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+  })
   email?: string;
 
   @Prop({ required: true, minlength: 6, maxlength: 20 })
   @Exclude()
   password: string;
 
-  @Prop({ required: true, minlength: 6, maxlength: 20 })
+  @Prop({ required: true, minlength: 6, maxlength: 20, unique: true })
   username: string;
 
   @Prop({ required: true })
   age: number;
 
-  @Prop()
+  @Prop({
+    default:
+      'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png',
+  })
   profileImageUrl?: string;
 
-  @Prop()
+  @Prop({ maxlength: 500 })
   description?: string;
 
   @Prop()
@@ -31,22 +39,28 @@ export class User {
   @Prop()
   refreshToken?: string;
 
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
-
-  @Prop()
-  deletedAt: Date;
-
-  @Prop({ type: mongoose.Types.ObjectId, ref: User.name })
+  @Prop({
+    type: mongoose.Types.ObjectId,
+    ref: User.name,
+    default: null,
+    select: '_id username',
+  })
   createdBy: mongoose.Types.ObjectId;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: User.name })
+  @Prop({
+    type: mongoose.Types.ObjectId,
+    ref: User.name,
+    default: null,
+    select: '_id username',
+  })
   updatedBy: mongoose.Types.ObjectId;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: User.name })
+  @Prop({
+    type: mongoose.Types.ObjectId,
+    ref: User.name,
+    default: null,
+    select: '_id username',
+  })
   deletedBy: mongoose.Types.ObjectId;
 }
 
