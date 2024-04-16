@@ -13,11 +13,14 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './local-auth.guard';
 import { Public } from 'src/decorators/public';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { UserLoginDto, UserRegisterDto } from 'src/users/dto/create-user.dto';
+import {
+  UserLoginDto,
+  UserRegisterDto,
+} from '@modules/users/dto/create-user.dto';
 import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '@modules/users/users.service';
 import { Response } from 'express';
 
 @ApiTags('Auth')

@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UserRegisterDto } from './dto/create-user.dto';
@@ -14,6 +16,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public';
 
 @ApiTags('Users')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
