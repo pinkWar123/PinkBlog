@@ -49,3 +49,16 @@ export interface IPost {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IComment {
+  _id: string;
+  parentId: string;
+  content: string;
+  createdBy: {
+    username: string;
+    _id: string;
+    profileImageUrl?: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
