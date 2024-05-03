@@ -1,7 +1,9 @@
+import { PostDocument } from '@modules/posts/schemas/post.schema';
 import { BaseEntity } from '@modules/shared/base/base.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { NextFunction } from 'express';
+import mongoose, { HydratedDocument, Model } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -65,3 +67,21 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+export const UserSchemaFactory = (postModel: Model<PostDocument>) => {
+  const user_schema = UserSchema;
+
+  user_schema.pre('findOneAndDelete', async function (next: NextFunction) {
+    // OTHER USEFUL METHOD: getOptions, getPopulatedPaths, getQuery = getFilter, getUpdate
+    const user = await this.model.findOne(this.getFilter());
+    await Promise.all([
+      postModel
+        .deleteMany({
+          user: user._id,
+        })
+        .exec(),
+    ]);
+    return next();
+  });
+  return user_schema;
+};

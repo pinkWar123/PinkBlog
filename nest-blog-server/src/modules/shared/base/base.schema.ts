@@ -14,26 +14,26 @@ export class BaseEntity {
   deletedAt: Date;
 
   @Prop({
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,
     select: '_id username',
   })
-  createdBy: mongoose.Types.ObjectId;
+  createdBy: mongoose.Schema.Types.ObjectId | User;
 
   @Prop({
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,
     select: '_id username',
   })
-  updatedBy: mongoose.Types.ObjectId;
+  updatedBy: mongoose.Schema.Types.ObjectId;
 
   @Prop({
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,
     select: '_id username',
   })
-  deletedBy: mongoose.Types.ObjectId;
+  deletedBy: mongoose.Schema.Types.ObjectId;
 }

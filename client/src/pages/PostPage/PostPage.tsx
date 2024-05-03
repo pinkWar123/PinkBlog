@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import UserStateContext from "../../context/users/UserContext";
 import { useContext, useEffect, useState } from "react";
-import { Avatar } from "antd";
+import { Avatar, FloatButton } from "antd";
 import styles from "./PostPage.module.scss";
 
 import "react-quill/dist/quill.snow.css";
@@ -11,6 +11,7 @@ import Comment from "./Comment";
 import Post from "./Post";
 import { IPost } from "../../types/backend";
 import { fetchPostById } from "../../services/postsApi";
+import CommentStateProvider from "../../context/comment/CommentContextProvider";
 
 const PostPage: React.FC = () => {
   const { id } = useParams();
@@ -56,8 +57,11 @@ const PostPage: React.FC = () => {
         </div>
       </div>
       <div style={{ marginTop: "100px" }}>
-        <Comment targetId={id} />
+        <CommentStateProvider targetId={id}>
+          <Comment targetId={id} />
+        </CommentStateProvider>
       </div>
+      <FloatButton.BackTop tooltip="Scroll to top" />
     </div>
   );
 };

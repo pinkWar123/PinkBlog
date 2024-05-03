@@ -1,11 +1,16 @@
 import { IBackendRes, IComment, IPagination } from "../types/backend";
 import axiosInstance from "./config";
 
-const createRootComment = async (content: string, targetId: string) => {
+const createComment = async (
+  content: string,
+  targetId: string,
+  parentId?: string
+) => {
   try {
     const res = await axiosInstance.post<IBackendRes<IComment>>("comments", {
       content,
       targetId,
+      parentId,
     });
     return res;
   } catch (error) {
@@ -31,4 +36,17 @@ const fetchCommentsOfPost = async (
   }
 };
 
-export { createRootComment, fetchCommentsOfPost };
+const fetchListOfCommentsByIds = async (ids: string[]) => {
+  try {
+    const res = await axiosInstance.post<IBackendRes<IComment[]>>(
+      "comments/multiple",
+      ids
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
+export { createComment, fetchCommentsOfPost, fetchListOfCommentsByIds };

@@ -26,3 +26,30 @@
     cursor: pointer;
   }
 }
+.reply-comment {
+  width: 90%;
+  margin-left: 10%;
+}
+
+.comment-wrapper {
+  border: 1px solid #ddd;
+  padding: 20px 24px;
+  &.reply {
+    padding: 20px 0;
+    border: none;
+    width: 90%;
+    margin-left: 10%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .avatar-wrapper {
+    display: none;
+  }
+
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}

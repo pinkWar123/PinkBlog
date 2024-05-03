@@ -1,12 +1,22 @@
-import { Module } from '@nestjs/common';
+import { Module, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './schemas/user.schema';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
+import { User, UserSchema, UserSchemaFactory } from './schemas/user.schema';
+import { PostSchema } from '@modules/posts/schemas/post.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeatureAsync([
+      {
+        name: User.name,
+        useFactory: UserSchemaFactory,
+        inject: [getModelToken(Post.name)],
+        imports: [
+          MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+        ],
+      },
+    ]),
   ],
   controllers: [UsersController],
   providers: [UsersService],

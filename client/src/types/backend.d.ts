@@ -52,7 +52,15 @@ export interface IPost {
 
 export interface IComment {
   _id: string;
-  parentId: string;
+  parentId: {
+    createdBy: {
+      username: string;
+      _id: string;
+      profileImageUrl?: string;
+    };
+  } | null;
+  childrenIds: string[];
+  children: IComment[] = [];
   content: string;
   createdBy: {
     username: string;
@@ -61,4 +69,11 @@ export interface IComment {
   };
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IMeta {
+  total: number;
+  current: number;
+  pageSize: number;
+  pages: number;
 }
