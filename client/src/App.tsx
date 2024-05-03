@@ -18,6 +18,7 @@ import {
   Latest,
   Series,
 } from "./pages/HomePage/Latest";
+import { ShowTopPostsProvider } from "./context/top-posts";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -40,7 +41,13 @@ export default function App() {
         <UserStateContext.Provider value={{ user, setUser }}>
           <Routes>
             <Route path="/" element={<Navigate to={"/latest"} />} />
-            <Route element={<MainLayout></MainLayout>}>
+            <Route
+              element={
+                <ShowTopPostsProvider>
+                  <MainLayout></MainLayout>
+                </ShowTopPostsProvider>
+              }
+            >
               <Route element={<HomePage />}>
                 <Route path="latest" element={<Latest />} />
                 <Route path="following" element={<Following />} />

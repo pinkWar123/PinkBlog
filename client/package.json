@@ -14,6 +14,8 @@
     "antd": "^5.15.3",
     "antd-img-crop": "^4.21.0",
     "axios": "^1.6.8",
+    "classnames": "^2.5.1",
+    "clsx": "^2.1.1",
     "lodash": "^4.17.21",
     "quill-emoji": "^0.2.0",
     "react": "^18.2.0",

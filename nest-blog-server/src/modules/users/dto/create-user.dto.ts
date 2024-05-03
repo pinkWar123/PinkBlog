@@ -23,6 +23,8 @@ export class UserLoginDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(6)
+  @MaxLength(20)
   @ApiProperty({ example: '123456', description: "Enter user's password" })
   readonly password: string;
 }
@@ -38,6 +40,8 @@ export class UserRegisterDto {
     example: 'john123',
     description: "Enter user's username",
   })
+  @MinLength(6)
+  @MaxLength(20)
   username: string;
 
   @IsString({ message: 'Username must be a string' })

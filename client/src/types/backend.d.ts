@@ -49,3 +49,31 @@ export interface IPost {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IComment {
+  _id: string;
+  parentId: {
+    createdBy: {
+      username: string;
+      _id: string;
+      profileImageUrl?: string;
+    };
+  } | null;
+  childrenIds: string[];
+  children: IComment[] = [];
+  content: string;
+  createdBy: {
+    username: string;
+    _id: string;
+    profileImageUrl?: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IMeta {
+  total: number;
+  current: number;
+  pageSize: number;
+  pages: number;
+}

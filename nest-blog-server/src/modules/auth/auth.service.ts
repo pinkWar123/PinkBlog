@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { IUser } from 'src/types/user.type';
-import { UserRegisterDto } from 'src/users/dto/create-user.dto';
-import { UsersService } from 'src/users/users.service';
+import { UserRegisterDto } from '@modules/users/dto/create-user.dto';
+import { UsersService } from '@modules/users/users.service';
 import ms from 'ms';
 
 @Injectable()
