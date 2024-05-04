@@ -77,4 +77,43 @@ const fetchPostById = async (id: string) => {
   }
 };
 
-export { createPost, fetchPublicPosts, fetchPostById, fetchLatestPosts };
+const upvote = async (_id: string) => {
+  try {
+    const res = await axiosInstance.post<IBackendRes<{ likes: number }>>(
+      "posts/upvote",
+      { _id }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error.response.data.message,
+    });
+    return null;
+  }
+};
+
+const downvote = async (_id: string) => {
+  try {
+    const res = await axiosInstance.post<IBackendRes<{ likes: number }>>(
+      "posts/downvote",
+      { _id }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error.response.data.message,
+    });
+    return null;
+  }
+};
+
+export {
+  createPost,
+  fetchPublicPosts,
+  fetchPostById,
+  fetchLatestPosts,
+  upvote,
+  downvote,
+};

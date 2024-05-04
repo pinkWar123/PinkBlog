@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
-import UserStateContext from "../../context/users/UserContext";
-import { useContext, useEffect, useState } from "react";
-import { Avatar, FloatButton } from "antd";
+import { useEffect, useState } from "react";
+import { FloatButton } from "antd";
 import styles from "./PostPage.module.scss";
 
 import "react-quill/dist/quill.snow.css";
@@ -12,6 +11,7 @@ import Post from "./Post";
 import { IPost } from "../../types/backend";
 import { fetchPostById } from "../../services/postsApi";
 import CommentStateProvider from "../../context/comment/CommentContextProvider";
+import FloatSider from "./FloatSider";
 
 const PostPage: React.FC = () => {
   const { id } = useParams();
@@ -26,31 +26,10 @@ const PostPage: React.FC = () => {
     };
     fetchPost();
   }, [id]);
-  const { user } = useContext(UserStateContext);
-  const [showSideAvatar, setShowSideAvatar] = useState<boolean>(false);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setShowSideAvatar(true);
-      } else {
-        setShowSideAvatar(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   return (
     <div style={{ paddingBottom: "64px" }}>
-      <div className={styles["avatar-wrapper"]}>
-        {showSideAvatar && (
-          <Avatar src={post?.createdBy.profileImageUrl} size={40} />
-        )}
-      </div>
+      <FloatSider post={post} />
       <div className={styles["container"]}>
         <div>
           <Post post={post} />
