@@ -34,6 +34,19 @@ export class Comment extends BaseEntity {
   childrenIds: Comment[] | mongoose.Schema.Types.ObjectId[];
 
   @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }],
+  })
+  upvotedBy: string[];
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }],
+  })
+  downvotedBy: string[];
+
+  @Prop({ default: 0 })
+  likes: number;
+
+  @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,

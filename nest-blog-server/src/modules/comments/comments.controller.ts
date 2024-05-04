@@ -18,6 +18,7 @@ import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
 import mongoose from 'mongoose';
+import { VoteDto } from '@modules/posts/dto/update-post.dto';
 
 @ApiTags('comments')
 @Controller('comments')
@@ -67,6 +68,18 @@ export class CommentsController {
     @Body() ids: string[] | mongoose.Schema.Types.ObjectId[],
   ) {
     return this.commentsService.findListOfCommentsByIds(ids);
+  }
+
+  @Post('upvote')
+  @ResponseMessage('This API returns the result of upvoting a post by a user')
+  upvote(@User() user: IUser, @Body() voteDto: VoteDto) {
+    return this.commentsService.upvote(user, voteDto);
+  }
+
+  @Post('downvote')
+  @ResponseMessage('This API returns the result of devoting a post by a user')
+  downvote(@User() user: IUser, @Body() voteDto: VoteDto) {
+    return this.commentsService.downvote(user, voteDto);
   }
 
   @Get(':id')

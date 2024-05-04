@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
   IsIn,
-  IsMongoId,
   IsNotEmpty,
   IsString,
   MaxLength,
