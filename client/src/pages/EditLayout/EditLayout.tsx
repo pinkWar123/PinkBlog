@@ -1,4 +1,14 @@
-import { Button, Col, Flex, Input, Popover, Row, Select, Space } from "antd";
+import {
+  Button,
+  Col,
+  Flex,
+  Input,
+  Layout,
+  Popover,
+  Row,
+  Select,
+  Space,
+} from "antd";
 import { MainHeader } from "../../components/shared";
 import ReactQuill from "react-quill";
 import { useState } from "react";
@@ -50,7 +60,7 @@ const EditLayout: React.FC = () => {
     }
   };
   return (
-    <>
+    <Layout style={{ backgroundColor: "white" }}>
       <MainHeader />
       <div style={{ width: "95%", margin: "0 auto" }}>
         <Input
@@ -94,10 +104,10 @@ const EditLayout: React.FC = () => {
           onChange={setValue}
           modules={{ toolbar: toolbarOptions }}
           placeholder="Write something ..."
-          style={{ marginTop: "30px", height: "60vh" }}
+          style={{ marginTop: "30px", height: "60vh", maxWidth: "100%" }}
         />
       </div>
-    </>
+    </Layout>
   );
 };
 

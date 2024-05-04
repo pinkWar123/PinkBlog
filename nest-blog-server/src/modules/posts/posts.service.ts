@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { UpdatePostDto, VoteDto } from './dto/update-post.dto';
 import { IUser } from 'src/types/user.type';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from './schemas/post.schema';
@@ -110,6 +110,64 @@ export class PostsService {
 
   update(id: number, updatePostDto: UpdatePostDto) {
     return `This action updates a #${id} post`;
+  }
+
+  async upvote(user: IUser, voteDto: VoteDto) {
+    try {
+      const targetPost = await this.postModel.findById(voteDto._id);
+      const hasUserUpvoted = targetPost.upvotedBy.some(
+        (item) => item == user._id,
+      );
+      if (hasUserUpvoted) {
+        throw new Error('Each user can only upvote once');
+      }
+      targetPost.upvotedBy.push(user._id);
+      const hasUserDevoted = targetPost.devotedBy.some(
+        (item) => item == user._id,
+      );
+      targetPost.likes += 1;
+      if (hasUserDevoted) {
+        targetPost.devotedBy = targetPost.devotedBy.filter(
+          (item) => item != user._id,
+        );
+        targetPost.likes += 1;
+      }
+      await targetPost.save();
+      return {
+        likes: targetPost.likes,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async downvote(user: IUser, voteDto: VoteDto) {
+    try {
+      const targetPost = await this.postModel.findById(voteDto._id);
+      const hasUserDevoted = targetPost.devotedBy.some(
+        (item) => item == user._id,
+      );
+      if (hasUserDevoted) {
+        throw new Error('Each user can only devote once');
+      }
+      targetPost.devotedBy.push(user._id);
+      const hasUserUpvoted = targetPost.upvotedBy.some(
+        (item) => item == user._id,
+      );
+      targetPost.likes -= 1;
+      if (hasUserUpvoted) {
+        targetPost.upvotedBy = targetPost.upvotedBy.filter(
+          (item) => item != user._id,
+        );
+        targetPost.likes -= 1;
+      }
+      await targetPost.save();
+      return {
+        likes: targetPost.likes,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   remove(id: number) {

@@ -1,22 +1,33 @@
 import { useContext, useEffect, useState } from "react";
-import { IComment } from "../../types/backend";
+import { IComment, IUser } from "../../types/backend";
 import styles from "./PostPage.module.scss";
 import { getFormatDate } from "../../utils/formateDate";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
-import { Avatar, Tag } from "antd";
+import { Avatar, Tag, message } from "antd";
 import CommentEdit from "./CommentEdit";
 import classNames from "classnames/bind";
 import UserAvatar from "../../components/shared/Avatar";
-import { fetchListOfCommentsByIds } from "../../services/commentsApi";
+import {
+  downvote,
+  fetchListOfCommentsByIds,
+  upvote,
+} from "../../services/commentsApi";
 import CommentStateContext from "../../context/comment/CommentContext";
+import UserStateContext from "../../context/users/UserContext";
 const cx = classNames.bind(styles);
 
 const commentPageSize = 5;
 
 const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
+  const [messageApi, contextHolder] = message.useMessage();
+  const { user } = useContext(UserStateContext);
   const [showReplyEdit, setShowReplyEdit] = useState<boolean>(false);
   const { commentList, setCommentList } = useContext(CommentStateContext);
   const [startCommentIndex, setStartCommentIndex] = useState<number>(0);
+  const [likes, setLikes] = useState<number>(0);
+  useEffect(() => {
+    setLikes(comment.likes ?? 0);
+  }, [comment.likes]);
   useEffect(() => {
     if (comment.parentId) {
       comment.content = `
@@ -113,6 +124,36 @@ const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
     }
   };
 
+  const handleInvalidVote = (
+    user: IUser | undefined,
+    comment: IComment | undefined
+  ) => {
+    if (!comment || !comment._id) {
+      messageApi.open({
+        type: "error",
+        content: "Invalid post",
+      });
+      return;
+    }
+    if (!user)
+      messageApi.open({
+        type: "error",
+        content: "Please log in to upvote/downvote",
+      });
+  };
+
+  const handleVote = async (action: "upvote" | "downvote") => {
+    handleInvalidVote(user, comment);
+    if (comment?._id) {
+      let res;
+      if (action === "upvote") res = await upvote(comment?._id);
+      else if (action === "downvote") res = await downvote(comment?._id);
+      if (res && res.status === 201) {
+        setLikes(res.data.data?.likes ?? 0);
+      }
+    }
+  };
+
   return (
     <div style={{ marginTop: "20px" }}>
       <div
@@ -161,9 +202,17 @@ const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
           ></div>
         </div>
         <div style={{ display: "flex", lineHeight: "12px" }}>
-          <UpOutlined />
-          <span style={{ padding: "0px 4px" }}>+1</span>
-          <DownOutlined />
+          <UpOutlined
+            style={{ cursor: "pointer" }}
+            onClick={() => handleVote("upvote")}
+          />
+          <span style={{ padding: "0px 4px" }}>
+            {likes < 0 ? likes : `+${likes}`}
+          </span>
+          <DownOutlined
+            style={{ cursor: "pointer" }}
+            onClick={() => handleVote("downvote")}
+          />
           <div style={{ marginLeft: "6px", paddingRight: "6px" }}>|</div>
           <div
             style={{ color: "blue", cursor: "pointer" }}

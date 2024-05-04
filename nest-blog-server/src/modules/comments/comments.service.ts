@@ -7,6 +7,7 @@ import { Comment, CommentDocument } from './schemas/comment.schema';
 import { IUser } from 'src/types/user.type';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { VoteDto } from '@modules/posts/dto/update-post.dto';
 
 @Injectable()
 export class CommentsService {
@@ -222,6 +223,64 @@ export class CommentsService {
 
   findOne(id: number) {
     return `This action returns a #${id} comment`;
+  }
+
+  async upvote(user: IUser, voteDto: VoteDto) {
+    try {
+      const targetPost = await this.commentModel.findById(voteDto._id);
+      const hasUserUpvoted = targetPost.upvotedBy.some(
+        (item) => item == user._id,
+      );
+      if (hasUserUpvoted) {
+        throw new Error('Each user can only upvote once');
+      }
+      targetPost.upvotedBy.push(user._id);
+      const hasUserDevoted = targetPost.downvotedBy.some(
+        (item) => item == user._id,
+      );
+      targetPost.likes += 1;
+      if (hasUserDevoted) {
+        targetPost.downvotedBy = targetPost.downvotedBy.filter(
+          (item) => item != user._id,
+        );
+        targetPost.likes += 1;
+      }
+      await targetPost.save();
+      return {
+        likes: targetPost.likes,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async downvote(user: IUser, voteDto: VoteDto) {
+    try {
+      const targetComment = await this.commentModel.findById(voteDto._id);
+      const hasUserDevoted = targetComment.downvotedBy.some(
+        (item) => item == user._id,
+      );
+      if (hasUserDevoted) {
+        throw new Error('Each user can only devote once');
+      }
+      targetComment.downvotedBy.push(user._id);
+      const hasUserUpvoted = targetComment.upvotedBy.some(
+        (item) => item == user._id,
+      );
+      targetComment.likes -= 1;
+      if (hasUserUpvoted) {
+        targetComment.upvotedBy = targetComment.upvotedBy.filter(
+          (item) => item != user._id,
+        );
+        targetComment.likes -= 1;
+      }
+      await targetComment.save();
+      return {
+        likes: targetComment.likes,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {

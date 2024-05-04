@@ -17,6 +17,15 @@ export class Post extends BaseEntity {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Tag.name }] })
   tags: Tag[];
 
+  @Prop({ default: 0 })
+  likes: number;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }] })
+  upvotedBy: string[];
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: User.name }] })
+  devotedBy: string[];
+
   @Prop({
     type: String,
     enum: ['public', 'private'],

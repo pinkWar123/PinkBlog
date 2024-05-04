@@ -40,6 +40,7 @@ export interface IPost {
   _id: string;
   title: string;
   content?: string;
+  likes: number;
   tags: ITag[];
   createdBy: {
     username: string;
@@ -62,6 +63,7 @@ export interface IComment {
   childrenIds: string[];
   children: IComment[] = [];
   content: string;
+  likes: number;
   createdBy: {
     username: string;
     _id: string;

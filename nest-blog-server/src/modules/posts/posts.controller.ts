@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { UpdatePostDto, VoteDto } from './dto/update-post.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
@@ -44,6 +44,18 @@ export class PostsController {
   @ResponseMessage('This API returns a post by ID')
   findPostById(@Param('id') id: string) {
     return this.postsService.findPostById(id);
+  }
+
+  @Post('upvote')
+  @ResponseMessage('This API returns the result of upvoting a post by a user')
+  upvote(@User() user: IUser, @Body() voteDto: VoteDto) {
+    return this.postsService.upvote(user, voteDto);
+  }
+
+  @Post('downvote')
+  @ResponseMessage('This API returns the result of devoting a post by a user')
+  downvote(@User() user: IUser, @Body() voteDto: VoteDto) {
+    return this.postsService.downvote(user, voteDto);
   }
 
   @Patch(':id')

@@ -1,3 +1,4 @@
+import { Modal } from "antd";
 import { IBackendRes, IComment, IPagination } from "../types/backend";
 import axiosInstance from "./config";
 
@@ -49,4 +50,42 @@ const fetchListOfCommentsByIds = async (ids: string[]) => {
   }
 };
 
-export { createComment, fetchCommentsOfPost, fetchListOfCommentsByIds };
+const upvote = async (_id: string) => {
+  try {
+    const res = await axiosInstance.post<IBackendRes<{ likes: number }>>(
+      "comments/upvote",
+      { _id }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error.response.data.message,
+    });
+    return null;
+  }
+};
+
+const downvote = async (_id: string) => {
+  try {
+    const res = await axiosInstance.post<IBackendRes<{ likes: number }>>(
+      "comments/downvote",
+      { _id }
+    );
+    return res;
+  } catch (error: Error | any) {
+    console.log(error);
+    Modal.error({
+      title: error.response.data.message,
+    });
+    return null;
+  }
+};
+
+export {
+  createComment,
+  fetchCommentsOfPost,
+  fetchListOfCommentsByIds,
+  upvote,
+  downvote,
+};
