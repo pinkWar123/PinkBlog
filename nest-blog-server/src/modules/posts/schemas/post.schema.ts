@@ -11,7 +11,7 @@ export class Post extends BaseEntity {
   @Prop({ required: true, minlength: 100 })
   content: string;
 
-  @Prop({ required: true, minlength: 10, maxlength: 100 })
+  @Prop({ required: true, minlength: 10, maxlength: 200 })
   title: string;
 
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Tag.name }] })

@@ -17,8 +17,6 @@ export class AuthService {
 
   async validateUser(username: string, pass: string) {
     const user = await this.usersService.findOne(username);
-    console.log(user.password);
-    console.log(pass);
     if (user) {
       const isValid = this.usersService.isValidPassword(pass, user.password);
       if (isValid) {
