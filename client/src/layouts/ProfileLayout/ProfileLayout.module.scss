@@ -1,0 +1,26 @@
+.tab {
+  padding: 0 8px;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 18px;
+  cursor: pointer;
+
+  &.active {
+    color: blue;
+    border-bottom: 1px solid blue;
+  }
+  &:hover {
+    color: black;
+  }
+}
+
+.stat-wrapper {
+  border: 1px solid black;
+  padding: 12px;
+
+  .item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+  }
+}

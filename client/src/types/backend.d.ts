@@ -21,6 +21,10 @@ export interface IUser {
   sub?: string;
   iat?: string;
   profileImageUrl?: string;
+  isFollowed?: boolean;
+  numOfFollowers: number;
+  reputation: number;
+  numOfPosts: number;
 }
 
 export interface IRegister {
@@ -78,4 +82,13 @@ export interface IMeta {
   current: number;
   pageSize: number;
   pages: number;
+}
+
+export interface IFollower {
+  _id: string;
+  username: string;
+  numOfPosts: number;
+  numOfFollowers: number;
+  reputation: number;
+  profileImageUrl: string;
 }

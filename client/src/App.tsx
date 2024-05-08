@@ -8,10 +8,8 @@ import { useEffect, useState } from "react";
 import UserStateContext, { UserContextType } from "./context/users/UserContext";
 import { getUserInfo } from "./services/authApi";
 import EditLayout from "./pages/EditLayout/EditLayout";
-import Profile from "./pages/Profile";
+import Posts from "./pages/ProfilePage/Posts";
 import { IUser } from "./types/backend";
-import { MainHeader } from "./components/shared";
-import { Layout } from "antd";
 import {
   ContentCreator,
   Following,
@@ -19,6 +17,8 @@ import {
   Series,
 } from "./pages/HomePage/Latest";
 import { ShowTopPostsProvider } from "./context/top-posts";
+import ProfileLayout from "./layouts/ProfileLayout/ProfileLayout";
+import Followers from "./pages/ProfilePage/Followers";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -55,6 +55,7 @@ export default function App() {
                 <Route path="content-creator" element={<ContentCreator />} />
               </Route>
               <Route path="posts/:id" element={<PostPage />} />
+
               <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="auth" element={<AuthLayout></AuthLayout>}>
@@ -63,7 +64,10 @@ export default function App() {
             </Route>
 
             <Route path="edit" element={<EditLayout />} />
-            <Route path="profile" element={<Profile />} />
+            <Route path="profile/:id" element={<ProfileLayout />}>
+              <Route index element={<Posts />} />
+              <Route path="followers" element={<Followers />} />
+            </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
         </UserStateContext.Provider>
