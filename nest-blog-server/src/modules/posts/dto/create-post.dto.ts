@@ -13,8 +13,8 @@ import { ObjectIdArrayValidator } from 'src/decorators/objectId-array-validator'
 export class CreatePostDto {
   @IsNotEmpty({ message: 'Value of title must not be empty' })
   @IsString({ message: 'Value of title must be a string' })
-  @MaxLength(100, {
-    message: 'Tag must contain at most 100 characters',
+  @MaxLength(200, {
+    message: 'Title must contain at most 100 characters',
   })
   @MinLength(20, {
     message: 'Tag must contain at least 20 characters',

@@ -77,6 +77,22 @@ const fetchPostById = async (id: string) => {
   }
 };
 
+const fetchPostsByAuthorId = async (
+  authorId: string,
+  current: number = 0,
+  pageSize: number = 10
+) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+      `posts?createdBy=${authorId}&current=${current}&pageSize=${pageSize}`
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 const upvote = async (_id: string) => {
   try {
     const res = await axiosInstance.post<IBackendRes<{ likes: number }>>(
@@ -114,6 +130,7 @@ export {
   fetchPublicPosts,
   fetchPostById,
   fetchLatestPosts,
+  fetchPostsByAuthorId,
   upvote,
   downvote,
 };

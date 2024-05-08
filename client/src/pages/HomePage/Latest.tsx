@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { IPost } from "../../types/backend";
 import { fetchLatestPosts } from "../../services/postsApi";
-import { Pagination, PaginationProps, Skeleton } from "antd";
+import { Skeleton } from "antd";
 import { PostItem } from "../../components/shared";
 import { useLocation, useNavigate } from "react-router-dom";
+import PaginationHandler from "../../components/shared/PaginationHandler";
 
 interface IProps {
   type: "following" | "content-creator" | "latest" | "series";
@@ -14,11 +15,9 @@ const Content: React.FC<IProps> = ({ type }) => {
   const location = useLocation();
   const [posts, setPosts] = useState<IPost[] | undefined>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(0);
-  const [current, setCurrent] = useState<number>(0);
   const fetchPosts = useCallback(
     async (page: number) => {
+      setLoading(true);
       let res;
       switch (type) {
         case "following":
@@ -40,17 +39,14 @@ const Content: React.FC<IProps> = ({ type }) => {
       if (res?.status === 200) {
         console.log(res);
         setPosts(res.data.data?.result);
-        setTotal(res.data.data?.meta.total ?? 0);
-        setPageSize(res.data.data?.meta.pageSize ?? 0);
-        setCurrent(page);
-        setLoading(false);
       }
+      setLoading(false);
+      return res?.data.data?.meta;
     },
-    [type, setPosts, setTotal, setPageSize, setLoading]
+    [type, setPosts, setLoading]
   );
 
   useEffect(() => {
-    setLoading(true);
     const searchParams = new URLSearchParams(location.search);
     const pageString = searchParams.get("page");
     const page = pageString ? parseInt(pageString, 10) : 1;
@@ -58,46 +54,27 @@ const Content: React.FC<IProps> = ({ type }) => {
     fetchPosts(page);
   }, [type, location.search, fetchPosts]);
 
-  const onChange: PaginationProps["onChange"] = (pageNumber) => {
-    console.log("Page: ", pageNumber);
-    navigate(`/${type}?page=${pageNumber}`);
-    // window.location.href = `localhost:3000/${type}?page=${pageNumber}`;
-    fetchPosts(pageNumber);
-  };
-
   return (
     <Skeleton loading={loading}>
       <div>
-        {posts &&
-          posts.length > 0 &&
-          posts.map((post: IPost, index: number) => {
-            return (
-              <PostItem
-                tags={post.tags}
-                createdAt={post.createdAt}
-                createdBy={post.createdBy}
-                title={post.title}
-                key={index}
-                onClick={(e) => navigate(`/posts/${post._id}`)}
-              />
-            );
-          })}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "85%",
-            marginTop: "30px",
-          }}
-        >
-          <Pagination
-            current={current}
-            pageSize={pageSize}
-            total={total}
-            onChange={onChange}
-            style={{ marginTop: "50px", paddingBottom: "50px" }}
-          />
-        </div>
+        {posts && posts.length > 0 && (
+          <PaginationHandler fetchData={fetchPosts} module={type}>
+            <>
+              {posts.map((post: IPost, index: number) => {
+                return (
+                  <PostItem
+                    tags={post.tags}
+                    createdAt={post.createdAt}
+                    createdBy={post.createdBy}
+                    title={post.title}
+                    key={index}
+                    onClick={(e) => navigate(`/posts/${post._id}`)}
+                  />
+                );
+              })}
+            </>
+          </PaginationHandler>
+        )}
       </div>
     </Skeleton>
   );

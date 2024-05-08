@@ -35,7 +35,9 @@ export class PostsController {
     @Query('pageSize') result: string,
     @Query('current') current: number,
     @Query() qs: string,
+    @User() user: IUser,
   ) {
+    console.log(user);
     return this.postsService.findAll(+result, +current, qs);
   }
 

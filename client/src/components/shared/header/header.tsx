@@ -60,7 +60,7 @@ const MainHeader: React.FC = () => {
     {
       icon: <EditFilled />,
       label: "Viết bài",
-      onClick: () => navigate("/edit"),
+      onClick: () => navigate(`/edit`),
     },
     {
       icon: <UnorderedListOutlined />,
@@ -71,7 +71,7 @@ const MainHeader: React.FC = () => {
     {
       icon: <UserOutlined />,
       label: "Trang cá nhân",
-      onClick: () => navigate("/profile"),
+      onClick: () => navigate(`/profile/${user?._id}`),
     },
     {
       icon: <FileOutlinedAntd />,

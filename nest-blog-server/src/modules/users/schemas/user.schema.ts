@@ -10,13 +10,13 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({ timestamps: true })
 export class User {
   @Prop({
-    required: true,
+    required: false,
     unique: true,
     match: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
   })
   email?: string;
 
-  @Prop({ required: true, minlength: 6, maxlength: 20 })
+  @Prop({ required: true })
   @Exclude()
   password: string;
 
@@ -40,6 +40,24 @@ export class User {
 
   @Prop()
   refreshToken?: string;
+
+  @Prop({ default: 0 })
+  reputation: number;
+
+  @Prop({ default: 0 })
+  numOfPosts: number;
+
+  @Prop({
+    type: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: User.name,
+        default: null,
+        select: '_id username profileImageUrl',
+      },
+    ],
+  })
+  followedBy: string[];
 
   @Prop({
     type: mongoose.Types.ObjectId,
