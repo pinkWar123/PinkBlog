@@ -59,8 +59,10 @@ export class UploadService {
     const extName = path.extname(file.originalname);
     //get image's name (without extension)
     const baseName = path.basename(file.originalname, extName);
-    const finalName = `${folder}/${baseName}-${Date.now()}${extName}`;
+    const modifiedName = `${baseName}-${Date.now()}${extName}`;
+    const finalName = `${folder}/${modifiedName}`;
     const bucketName = this.configService.getOrThrow('AWS_S3_PUBLIC_BUCKET');
+    const encodeFileName = encodeURIComponent(modifiedName);
     const res = await this.s3Client.send(
       new PutObjectCommand({
         Bucket: bucketName,
@@ -72,8 +74,11 @@ export class UploadService {
         ContentLength: file.size,
       }),
     );
+
+    const region = this.configService.getOrThrow('AWS_S3_REGION');
+
     return {
-      fileName: `https://${bucketName}.s3.amazonaws.com/${finalName}`,
+      fileName: `https://${bucketName}.s3.${region}.amazonaws.com/${folder}/${encodeFileName}`,
       key: finalName,
     };
   }
