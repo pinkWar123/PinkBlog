@@ -7,3 +7,9 @@ export interface CreateUserDto {
   profileImageUrl?: string;
   role: string;
 }
+
+export interface CreateTagDto {
+  value: string;
+}
+
+export interface UpdateTagDto extends CreateTagDto {}

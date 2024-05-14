@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, Form, Input, Modal, Table, Tooltip } from "antd";
+import {
+  Button,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Tooltip,
+  message,
+} from "antd";
 import type { GetProp, TableProps } from "antd";
 import qs from "qs";
 import { IBackendRes, IPagination, IUser } from "../../types/backend";
@@ -101,6 +110,7 @@ function TableHandler({
     },
   });
   const [modalOpen, toggleModal] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
   const fetchTableData = async () => {
     setLoading(true);
     const res: AxiosResponse<IBackendRes<IPagination<any>>, any> | null =
@@ -142,9 +152,22 @@ function TableHandler({
 
   const handleDeleteData = async () => {
     if (!deleteData || !activeIndex || !data) return;
-    await deleteData(data[activeIndex]._id);
+    const res = await deleteData(data[activeIndex]._id);
+    if (res?.status !== 200) {
+      message.open({
+        type: "error",
+        content: res?.data.message,
+        duration: 1,
+      });
+    } else {
+      fetchTableData();
+      message.open({
+        type: "success",
+        content: res.data.message,
+        duration: 1,
+      });
+    }
     toggleModal(false);
-    fetchTableData();
   };
 
   const editColumn = {
@@ -181,6 +204,7 @@ function TableHandler({
 
   return (
     <>
+      {contextHolder}
       <Table
         columns={tableColumns}
         rowKey={(record) => record._id}

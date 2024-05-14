@@ -51,6 +51,7 @@ export interface IRegister {
 export interface ITag {
   value: string;
   _id: string;
+  createdAt: Date;
 }
 
 export interface IPost {

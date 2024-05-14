@@ -14,7 +14,7 @@ const AdminLayout: React.FC = () => {
           <Sider>
             <Navigation />
           </Sider>
-          <Content>
+          <Content style={{ padding: "24px" }}>
             <Outlet />
           </Content>
         </Layout>
