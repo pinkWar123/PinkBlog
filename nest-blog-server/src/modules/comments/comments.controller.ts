@@ -71,29 +71,40 @@ export class CommentsController {
   }
 
   @Post('upvote')
-  @ResponseMessage('This API returns the result of upvoting a post by a user')
+  @ResponseMessage(
+    'This API returns the result of upvoting a post by a comment',
+  )
   upvote(@User() user: IUser, @Body() voteDto: VoteDto) {
     return this.commentsService.upvote(user, voteDto);
   }
 
   @Post('downvote')
-  @ResponseMessage('This API returns the result of devoting a post by a user')
+  @ResponseMessage(
+    'This API returns the result of devoting a post by a comment',
+  )
   downvote(@User() user: IUser, @Body() voteDto: VoteDto) {
     return this.commentsService.downvote(user, voteDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.commentsService.findOne(+id);
+  @ResponseMessage('This API returns a comment by id')
+  findCommentById(@Param('id') id: string) {
+    return this.commentsService.findCommentById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentsService.update(+id, updateCommentDto);
+  @ResponseMessage('This API returns the result of updating a comment by id')
+  updateCommentById(
+    @Param('id') id: string,
+    @Body() updateCommentDto: UpdateCommentDto,
+    @User() user: IUser,
+  ) {
+    return this.commentsService.updateCommentById(id, updateCommentDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.commentsService.remove(+id);
+  @ResponseMessage('This API returns the result of deleting a comment by id')
+  removeCommentById(@Param('id') id: string, @User() user: IUser) {
+    return this.commentsService.removeCommentById(id, user);
   }
 }

@@ -42,7 +42,9 @@ import { UploadService } from './upload-file.service';
 import { Public } from 'src/decorators/public';
 import { ResponseMessage } from 'src/decorators/response.message';
 import { DeleteDto } from './dto/delete.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Upload')
 @Controller('upload')
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}

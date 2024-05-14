@@ -1,36 +1,112 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto, UserRegisterDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument, UserSchema } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 import { IUser } from 'src/types/user.type';
 import mongoose from 'mongoose';
 import aqp from 'api-query-params';
+import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
+import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+    @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
   ) {}
   async create(userRegisterDto: UserRegisterDto) {
-    return 'This action adds a new user';
+    let role = userRegisterDto.role;
+    if (role) {
+      const targetRole = await this.roleModel.findById(role);
+      if (!targetRole) {
+        throw new BadRequestException(`Role ${role} not found`);
+      }
+    } else {
+      const userRole = (
+        await this.roleModel.findOne({ name: 'USER' })
+      ).toObject();
+      if (userRole) role = userRole._id.toString();
+    }
+    const res = await this.userModel.create({ ...userRegisterDto, role });
+    const actualRole = (await this.roleModel.findById(role)).toObject();
+    const result = {
+      ...res,
+      role: {
+        _id: actualRole._id.toString(),
+        name: actualRole.name,
+      },
+    };
+    console.log(result);
+    return result;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findUsersWithPagination(current: number, pageSize: number, qs: string) {
+    try {
+      const { population, projection, filter } = aqp(qs);
+      const { sort }: { sort: any } = aqp(qs);
+      delete filter.pageSize;
+      delete filter.current;
+      const totalItems = await this.userModel.countDocuments({ ...filter });
+      const totalPages = Math.ceil(totalItems / pageSize);
+      const calculatedSkip = (current - 1) * pageSize;
+
+      const users = await this.userModel
+        .find({ ...filter })
+        .sort({ ...sort })
+        .skip(calculatedSkip > 0 ? calculatedSkip : 0)
+        .limit(pageSize)
+        .select({ ...projection, password: 0, refreshToken: 0 })
+        .lean()
+        .exec();
+
+      const rolePromises = users.map(async (user) => {
+        const role = this.roleModel.findById(user.role);
+        return role;
+      });
+      const roles = await Promise.all(rolePromises);
+
+      return {
+        meta: {
+          pageSize,
+          pages: totalPages,
+          total: totalItems,
+        },
+        result: users.map((user, index) => {
+          const role = roles[index].toObject();
+          return {
+            ...user,
+            _id: user._id.toString(),
+            role: { ...role, _id: role._id.toString() },
+          };
+        }),
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateUserById(id: string, updateUserDto: UpdateUserDto, user: IUser) {
+    const res = await this.userModel.updateOne(
+      { _id: id },
+      {
+        ...updateUserDto,
+        updatedBy: user._id,
+      },
+    );
+    return res;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async removeUserById(id: string, user: IUser) {
+    await this.userModel.updateOne(
+      { _id: id },
+      {
+        deletedBy: user._id,
+      },
+    );
+    const res = await this.userModel.softDelete({ _id: id });
+    return res;
   }
 
   async findOne(username: string) {
@@ -47,8 +123,15 @@ export class UsersService {
       hasFollowedUser = user.followedBy.some((item) => item == currentUser);
     const numOfFollowers = user.followedBy?.length ?? 0;
     delete user.followedBy;
+    const role = await this.roleModel.findById(user.role);
+    role._id = role.id.toString();
     return {
       ...user,
+      _id: user._id.toString(),
+      role: {
+        ...role.toObject(),
+        _id: user.role.toString(),
+      },
       isFollowed: hasFollowedUser,
       numOfFollowers: numOfFollowers,
     };
@@ -56,6 +139,7 @@ export class UsersService {
 
   async hasUsernameExisted(username: string) {
     const user = await this.userModel.findOne({ username });
+    console.log(user);
     if (user !== null) {
       return user.username;
     }

@@ -20,12 +20,9 @@
 import { Module } from '@nestjs/common';
 import { UploadController } from './upload.controller';
 import { UploadService } from './upload-file.service';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
-import { MulterModule } from '@nestjs/platform-express';
-import { MulterConfigService } from './multer.config';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Upload')
 @Module({
   controllers: [UploadController],
   providers: [

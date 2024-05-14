@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -26,7 +27,7 @@ export class UserLoginDto {
   @MinLength(6)
   @MaxLength(20)
   @ApiProperty({ example: '123456', description: "Enter user's password" })
-  readonly password: string;
+  password: string;
 }
 
 export class UserRegisterDto {
@@ -91,4 +92,11 @@ export class UserRegisterDto {
       "This is the profile image url. User's profile image can be retrieved in profile folder",
   })
   profileImageUrl?: string;
+
+  @IsMongoId()
+  @IsOptional()
+  @ApiProperty({
+    description: 'This is the _id of the role assigned to the user',
+  })
+  role?: string;
 }

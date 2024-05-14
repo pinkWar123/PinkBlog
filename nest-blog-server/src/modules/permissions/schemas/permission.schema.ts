@@ -5,7 +5,7 @@ import { BaseEntity } from '@modules/shared/base/base.schema';
 export type PermissionDocument = HydratedDocument<Permission>;
 
 @Schema({ timestamps: true })
-export class Permission extends BaseEntity {
+export class Permission {
   @Prop({ required: true })
   name: string;
 
@@ -21,6 +21,24 @@ export class Permission extends BaseEntity {
 
   @Prop({ required: true, type: String })
   module: string;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
+
+  @Prop()
+  deletedAt: Date;
+
+  @Prop()
+  createdBy: string;
+
+  @Prop()
+  updatedBy: string;
+
+  @Prop()
+  deletedBy: string;
 }
 
 export const PermissionSchema = SchemaFactory.createForClass(Permission);

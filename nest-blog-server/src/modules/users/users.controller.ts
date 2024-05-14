@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserRegisterDto } from './dto/create-user.dto';
@@ -16,6 +17,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/decorators/public';
 import { ResponseMessage } from 'src/decorators/response.message';
+import { User } from 'src/decorators/user';
+import { IUser } from 'src/types/user.type';
 
 @ApiTags('Users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -28,9 +31,15 @@ export class UsersController {
     return this.usersService.create(userRegisterDto);
   }
 
+  @Public()
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @ResponseMessage('This API returns a list of users with pagination')
+  findUsersWithPagination(
+    @Query('current', ParseIntPipe) current: number,
+    @Query('pageSize', ParseIntPipe) pageSize: number,
+    @Query() qs: string,
+  ) {
+    return this.usersService.findUsersWithPagination(current, pageSize, qs);
   }
 
   @Public()
@@ -61,12 +70,18 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @ResponseMessage('This API returns the result of updating a user by id')
+  updateUserById(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @User() user: IUser,
+  ) {
+    return this.usersService.updateUserById(id, updateUserDto, user);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @ResponseMessage('This API returns the result of deleting a user by id')
+  removeUserById(@Param('id') id: string, @User() user: IUser) {
+    return this.usersService.removeUserById(id, user);
   }
 }

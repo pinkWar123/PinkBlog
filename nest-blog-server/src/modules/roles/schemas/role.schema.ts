@@ -1,12 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
-import { BaseEntity } from '@modules/shared/base/base.schema';
-import { Permission } from 'src/permissions/schemas/permission.schema';
+import { Permission } from '@modules/permissions/schemas/permission.schema';
 
 export type RoleDocument = HydratedDocument<Role>;
 
 @Schema({ timestamps: true })
-export class Role extends BaseEntity {
+export class Role {
   @Prop({ required: true })
   name: string;
 
@@ -17,19 +16,29 @@ export class Role extends BaseEntity {
   isActive: boolean;
 
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Permission.name }],
+    type: [
+      { type: mongoose.Schema.Types.ObjectId, ref: () => Permission.name },
+    ],
   })
   permissions: string[];
 
-  @Prop({
-    required: true,
-    type: String,
-    enum: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
-  })
-  method: string;
+  @Prop()
+  createdAt: Date;
 
-  @Prop({ required: true, type: String })
-  module: string;
+  @Prop()
+  updatedAt: Date;
+
+  @Prop()
+  deletedAt: Date;
+
+  @Prop()
+  createdBy: string;
+
+  @Prop()
+  updatedBy: string;
+
+  @Prop()
+  deletedBy: string;
 }
 
 export const RoleSchema = SchemaFactory.createForClass(Role);

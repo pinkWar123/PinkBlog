@@ -8,9 +8,8 @@ import { IUser } from 'src/types/user.type';
 import {
   Permission,
   PermissionDocument,
-} from 'src/permissions/schemas/permission.schema';
+} from '@modules/permissions/schemas/permission.schema';
 import aqp from 'api-query-params';
-import { userInfo } from 'os';
 import { ROLE } from './role-enum';
 
 @Injectable()
@@ -90,7 +89,7 @@ export class RolesService {
 
   async findRoleById(id: string) {
     try {
-      const res = await this.roleModel.findById(id);
+      const res = await this.roleModel.findById(id).populate('permissions');
       return res;
     } catch (error) {
       throw new Error(error.message);
