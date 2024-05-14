@@ -14,8 +14,17 @@ export interface IPagination<T> {
   result: T[];
 }
 
+export interface IUpdateResponse {
+  acknowledge: boolean;
+  modifiedCount: number;
+  upsertedId: string;
+  upsertedCount: number;
+  matchedCount: number;
+}
+
 export interface IUser {
   accessToken?: string;
+  age: number;
   _id: string;
   username: string;
   sub?: string;
@@ -25,6 +34,10 @@ export interface IUser {
   numOfFollowers: number;
   reputation: number;
   numOfPosts: number;
+  role: {
+    _id: string;
+    name: string;
+  };
 }
 
 export interface IRegister {
@@ -91,4 +104,11 @@ export interface IFollower {
   numOfFollowers: number;
   reputation: number;
   profileImageUrl: string;
+}
+
+export interface IRole {
+  _id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
 }

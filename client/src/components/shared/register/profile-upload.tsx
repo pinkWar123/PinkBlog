@@ -79,7 +79,7 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
       },
     };
     try {
-      const res = await uploadSingleFile(file, config);
+      const res = await uploadSingleFile(file, "profile", config);
       onSuccess("Ok");
       const fileName: string | undefined = res?.data?.data?.fileName;
       console.log(fileName);

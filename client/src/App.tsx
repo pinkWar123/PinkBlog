@@ -19,6 +19,8 @@ import {
 import { ShowTopPostsProvider } from "./context/top-posts";
 import ProfileLayout from "./layouts/ProfileLayout/ProfileLayout";
 import Followers from "./pages/ProfilePage/Followers";
+import AdminLayout from "./layouts/AdminLayout/AdminLayout";
+import User from "./pages/AdminPage/User";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -58,16 +60,23 @@ export default function App() {
 
               <Route path="*" element={<NotFound />} />
             </Route>
+
             <Route path="auth" element={<AuthLayout></AuthLayout>}>
               <Route index element={<Auth />} />
               <Route path="register" element={<Register />} />
             </Route>
 
             <Route path="edit" element={<EditLayout />} />
+
             <Route path="profile/:id" element={<ProfileLayout />}>
               <Route index element={<Posts />} />
               <Route path="followers" element={<Followers />} />
             </Route>
+
+            <Route path="admin" element={<AdminLayout />}>
+              <Route path="user" element={<User />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </UserStateContext.Provider>

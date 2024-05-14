@@ -1,4 +1,10 @@
-import { IBackendRes, IFollower, IPagination, IUser } from "../types/backend";
+import {
+  IBackendRes,
+  IFollower,
+  IPagination,
+  IUpdateResponse,
+  IUser,
+} from "../types/backend";
 import axiosInstance from "./config";
 
 const fetchUser = async () => {
@@ -10,6 +16,21 @@ const fetchUser = async () => {
     return res;
   } catch (error) {
     console.log(error);
+  }
+};
+
+const fetchUsersWithPagination = async (
+  current: number = 1,
+  pageSize: number = 5
+) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPagination<IUser>>>(
+      `/users?current=${current}&pageSize=${pageSize}`
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
@@ -57,9 +78,33 @@ const fetchFollowersOfUserById = async (
   }
 };
 
+const updateUserById = async (id: string, createUserDto: IUser) => {
+  const res = await axiosInstance.patch<IBackendRes<IUpdateResponse>>(
+    `/users/${id}`,
+    createUserDto
+  );
+  return res;
+};
+
+const deleteUserById = async (id: string) => {
+  console.log(id);
+  try {
+    const res = await axiosInstance.delete<IBackendRes<{ deleted: number }>>(
+      `/users/${id}`
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 export {
   fetchUser,
+  fetchUsersWithPagination,
   getUserById,
   fetchFollowersOfUserById,
   handleFollowUserById,
+  updateUserById,
+  deleteUserById,
 };

@@ -16,6 +16,7 @@ import TagDebounceSelect, { TagValue } from "./TagDebounceSelect";
 import Publish from "./Publish";
 import { createPost } from "../../services/postsApi";
 import { useNavigate } from "react-router-dom";
+import TextEditor from "../../components/shared/Editor";
 
 const toolbarOptions = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
@@ -48,6 +49,7 @@ const EditLayout: React.FC = () => {
   const handleOpenChange = (newOpen: boolean) => {
     togglePopover(newOpen);
   };
+  console.log(value);
   const onSubmit = async () => {
     const res = await createPost(
       title,
@@ -98,13 +100,10 @@ const EditLayout: React.FC = () => {
             </Popover>
           </Col>
         </Row>
-        <ReactQuill
-          theme="snow"
-          value={value}
-          onChange={setValue}
-          modules={{ toolbar: toolbarOptions }}
-          placeholder="Write something ..."
-          style={{ marginTop: "30px", height: "60vh", maxWidth: "100%" }}
+        <TextEditor
+          text={value}
+          setText={setValue}
+          toolbarOptions={toolbarOptions}
         />
       </div>
     </Layout>
