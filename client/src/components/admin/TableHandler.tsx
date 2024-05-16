@@ -151,19 +151,20 @@ function TableHandler({
   };
 
   const handleDeleteData = async () => {
-    if (!deleteData || !activeIndex || !data) return;
-    const res = await deleteData(data[activeIndex]._id);
+    if (!deleteData || activeIndex === undefined || !data) return;
+    const res: any = await deleteData(data[activeIndex]._id);
+    console.log(res);
     if (res?.status !== 200) {
       message.open({
         type: "error",
-        content: res?.data.message,
+        content: res?.error?.message,
         duration: 1,
       });
     } else {
       fetchTableData();
       message.open({
         type: "success",
-        content: res.data.message,
+        content: "Delete user succesfully",
         duration: 1,
       });
     }

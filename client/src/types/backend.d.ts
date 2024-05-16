@@ -1,5 +1,9 @@
+import { AxiosError } from "axios";
+
 export interface IBackendRes<T> {
-  error?: string | string[];
+  error?: {
+    message: string;
+  };
   message: string;
   statusCode: number | string;
   data?: T;
@@ -107,9 +111,32 @@ export interface IFollower {
   profileImageUrl: string;
 }
 
+export interface IPermission {
+  _id: string;
+  apiPath: string;
+  name: string;
+  method: "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
+  module: string;
+  createdAt: Date;
+}
+
 export interface IRole {
   _id: string;
   name: string;
   description: string;
   isActive: boolean;
+  permissions: string[];
+}
+
+export interface ISingleRole {
+  _id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  permissions: IPermission[];
+}
+
+export interface IGroupedPermission {
+  _id: string;
+  permissions: IPermission[];
 }

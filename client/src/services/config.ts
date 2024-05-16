@@ -22,8 +22,6 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-let modalShown = false;
-
 axiosInstance.interceptors.response.use(
   (response) => {
     console.log(response);
@@ -32,7 +30,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    return Promise.reject(error);
+    return error?.response?.data ?? Promise.reject(error);
   }
 );
 

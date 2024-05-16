@@ -22,6 +22,7 @@ import Followers from "./pages/ProfilePage/Followers";
 import AdminLayout from "./layouts/AdminLayout/AdminLayout";
 import User from "./pages/AdminPage/User";
 import Tags from "./pages/AdminPage/Tags";
+import Roles from "./pages/AdminPage/Roles/Roles";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -77,6 +78,7 @@ export default function App() {
             <Route path="admin" element={<AdminLayout />}>
               <Route path="users" element={<User />} />
               <Route path="tags" element={<Tags />} />
+              <Route path="permissions" element={<Roles />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
