@@ -78,7 +78,7 @@ export default function App() {
             <Route path="admin" element={<AdminLayout />}>
               <Route path="users" element={<User />} />
               <Route path="tags" element={<Tags />} />
-              <Route path="permissions" element={<Roles />} />
+              <Route path="roles" element={<Roles />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
