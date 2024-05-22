@@ -10,6 +10,9 @@ export interface CreateUserDto {
 
 export interface CreateTagDto {
   value: string;
+  color: string;
+  description?: string;
+  image?: File;
 }
 
 export interface UpdateTagDto extends CreateTagDto {}
@@ -22,3 +25,21 @@ export interface CreateRoleDto {
 }
 
 export interface UpdateRoleDto extends CreateRoleDto {}
+
+export interface UpdatePostDto {
+  status: "PENDING" | "REJECTED" | "APPROVED";
+}
+
+export interface CreatePermissionDto {
+  name: string;
+  module:
+    | "ROLES"
+    | "COMMENTS"
+    | "PERMISSIONS"
+    | "UPLOAD"
+    | "POSTS"
+    | "USERS"
+    | "TAGS";
+  apiPath: string;
+  method: "GET" | "POST" | "PATCH" | "DELETE";
+}

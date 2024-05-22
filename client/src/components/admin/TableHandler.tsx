@@ -1,43 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Flex,
-  Form,
-  Input,
-  Modal,
-  Table,
-  Tooltip,
-  message,
-} from "antd";
+import { Button, Flex, Modal, Table, Tooltip, message } from "antd";
 import type { GetProp, TableProps } from "antd";
-import qs from "qs";
-import { IBackendRes, IPagination, IUser } from "../../types/backend";
+import { IBackendRes, IPagination } from "../../types/backend";
 import { AxiosResponse } from "axios";
-import {
-  DeleteFilled,
-  DeleteOutlined,
-  EditFilled,
-  EditOutlined,
-} from "@ant-design/icons";
-import EditLayout from "../../pages/EditLayout/EditLayout";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 type ColumnsType<AnyObject> = TableProps<AnyObject>["columns"];
 type TablePaginationConfig = Exclude<
   GetProp<TableProps, "pagination">,
   boolean
 >;
-
-interface DataType {
-  name: {
-    first: string;
-    last: string;
-  };
-  gender: string;
-  email: string;
-  login: {
-    uuid: string;
-  };
-}
 
 interface TableParams {
   pagination?: TablePaginationConfig;
@@ -46,49 +18,20 @@ interface TableParams {
   filters?: Parameters<GetProp<TableProps, "onChange">>[1];
 }
 
-const columns: ColumnsType<DataType> = [
-  {
-    title: "Name",
-    dataIndex: "name",
-    sorter: true,
-    render: (name) => `${name.first} ${name.last}`,
-    width: "20%",
-  },
-  {
-    title: "Gender",
-    dataIndex: "gender",
-    filters: [
-      { text: "Male", value: "male" },
-      { text: "Female", value: "female" },
-    ],
-    width: "20%",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-  },
-];
-
-const getRandomuserParams = (params: TableParams) => ({
-  results: params.pagination?.pageSize,
-  page: params.pagination?.current,
-  ...params,
-});
-
 interface TableHandlerProps<AnyObject> extends TableProps<AnyObject> {
   data: AnyObject[] | undefined;
   setData: React.Dispatch<React.SetStateAction<AnyObject[] | undefined>>;
   fetchData: (
-    current?: number,
-    pageSize?: number
+    qs?: string
   ) => Promise<AxiosResponse<IBackendRes<IPagination<AnyObject>>, any> | null>;
   columns: ColumnsType<AnyObject>;
   deleteData?: (
     id: string
   ) => Promise<AxiosResponse<IBackendRes<{ deleted: number }>> | null>;
-  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
+  setEdit?: React.Dispatch<React.SetStateAction<boolean>>;
   activeIndex: number | undefined;
   setActiveIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
+  query?: string;
 }
 
 function TableHandler({
@@ -100,6 +43,7 @@ function TableHandler({
   setEdit,
   activeIndex,
   setActiveIndex,
+  query,
   ...rest
 }: TableHandlerProps<any>) {
   const [loading, setLoading] = useState(false);
@@ -113,11 +57,13 @@ function TableHandler({
   const [messageApi, contextHolder] = message.useMessage();
   const fetchTableData = async () => {
     setLoading(true);
+    const current = tableParams.pagination?.current ?? 1;
+    const pageSize = tableParams.pagination?.pageSize ?? 10;
+    const queryString = query
+      ? `${query}&current=${current}&pageSize=${pageSize}`
+      : `current=${current}&pageSize=${pageSize}`;
     const res: AxiosResponse<IBackendRes<IPagination<any>>, any> | null =
-      await fetchData(
-        tableParams.pagination?.current ?? 1,
-        tableParams.pagination?.pageSize ?? 5
-      );
+      await fetchData(queryString);
     setData(res?.data.data?.result);
     setLoading(false);
     setTableParams({
@@ -128,6 +74,26 @@ function TableHandler({
       },
     });
   };
+
+  useEffect(() => {
+    const handleQueryChange = async () => {
+      if (!query) return;
+      setLoading(true);
+      const queryString = `${query}&current=1&pageSize=10`;
+      const res: AxiosResponse<IBackendRes<IPagination<any>>, any> | null =
+        await fetchData(queryString);
+      setData(res?.data.data?.result);
+      setLoading(false);
+      setTableParams({
+        ...tableParams,
+        pagination: {
+          current: 1,
+          pageSize: 10,
+        },
+      });
+    };
+    handleQueryChange();
+  }, [query]);
 
   useEffect(() => {
     fetchTableData();
@@ -153,7 +119,6 @@ function TableHandler({
   const handleDeleteData = async () => {
     if (!deleteData || activeIndex === undefined || !data) return;
     const res: any = await deleteData(data[activeIndex]._id);
-    console.log(res);
     if (res?.status !== 200) {
       message.open({
         type: "error",
@@ -183,7 +148,7 @@ function TableHandler({
               onClick={() => {
                 if (index !== -1) {
                   setActiveIndex(index);
-                  setEdit((prev) => !prev);
+                  if (setEdit) setEdit((prev) => !prev);
                 }
               }}
             />

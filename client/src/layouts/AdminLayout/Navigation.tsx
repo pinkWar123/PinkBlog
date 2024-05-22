@@ -3,6 +3,7 @@ import {
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined,
+  SnippetsOutlined,
   TagOutlined,
   TeamOutlined,
   UserOutlined,
@@ -105,6 +106,12 @@ const Navigation: React.FC = () => {
         label: "Roles",
         icon: <TeamOutlined />,
         onClick: () => navigate("/admin/roles"),
+      },
+      {
+        key: "posts",
+        label: "Posts",
+        icon: <SnippetsOutlined />,
+        onClick: () => navigate("/admin/posts"),
       },
     ],
     [navigate]

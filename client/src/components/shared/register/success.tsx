@@ -13,7 +13,7 @@ const Success: React.FC = () => {
   const [isSuccess, setSuccess] = useState<boolean>(true);
   const { user } = useContext(UserStateContext);
   useEffect(() => {
-    setSuccess(user ? false : true);
+    setSuccess(user ? true : false);
   }, [user]);
   return (
     <>

@@ -5,6 +5,7 @@ import { SingleProps } from "../../../pages/auth/register";
 import { checkUserAccount } from "../../../services/authApi";
 import { useContext } from "react";
 import RegisterStateContext from "../../../context/register/RegisterContext";
+import { getUserByEmail } from "../../../services/usersApi";
 
 const formItemLayout = {
   labelCol: {
@@ -91,11 +92,21 @@ export const formItems = <T extends FieldType>(registerInfo: T | undefined) => [
     name="email"
     label="Email"
     initialValue={registerInfo?.email}
+    validateDebounce={500}
     rules={[
       {
         required: false,
         message: "Please enter a valid email",
         type: "email",
+      },
+      {
+        validator: async (_, value: string) => {
+          if (value.length === 0) return;
+          const result = await getUserByEmail(value);
+          if (result?.data?.data?.meta?.total) {
+            throw new Error("This email already exists");
+          }
+        },
       },
     ]}
   >

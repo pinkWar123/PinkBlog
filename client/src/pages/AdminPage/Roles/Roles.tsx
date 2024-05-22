@@ -27,6 +27,7 @@ import { getGroupedPermissions } from "../../../services/permissionsApi";
 import { Store } from "antd/es/form/interface";
 import RoleForm from "./RoleForm";
 import { PlusOutlined } from "@ant-design/icons";
+import PermisisonForm from "./PermissionForm";
 const { Meta } = Card;
 
 const renderMethodString = (
@@ -57,6 +58,7 @@ const Roles: React.FC = () => {
   const [roles, setRoles] = useState<IRole[] | undefined>();
   const [edit, setEdit] = useState<boolean>(false);
   const [addRole, setAddRole] = useState<boolean>(false);
+  const [addPermission, setAddPermission] = useState<boolean>(false);
   const [activeIndex, setActiveIndex] = useState<number>();
   const [groupedPermissions, setGroupedPermissions] = useState<
     IGroupedPermission[] | undefined
@@ -164,6 +166,13 @@ const Roles: React.FC = () => {
       >
         Add new role
       </Button>
+      <Button
+        type="text"
+        icon={<PlusOutlined />}
+        onClick={() => setAddPermission(true)}
+      >
+        Add new permission
+      </Button>
       <TableHandler
         data={roles}
         setData={setRoles}
@@ -193,6 +202,9 @@ const Roles: React.FC = () => {
           initialPermissions={[]}
           groupedPermissions={groupedPermissions}
         />
+      )}
+      {addPermission && (
+        <PermisisonForm onHide={() => setAddPermission(false)} />
       )}
     </>
   );

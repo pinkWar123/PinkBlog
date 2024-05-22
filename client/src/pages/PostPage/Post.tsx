@@ -1,4 +1,4 @@
-import { Avatar, Tag } from "antd";
+import { Avatar, Tag, Typography } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { IPost } from "../../types/backend";
 import { fetchPostById } from "../../services/postsApi";
@@ -60,14 +60,16 @@ const Post: React.FC<{ post: IPost | undefined }> = ({ post }) => {
         </div>
         <div>Đã đăng vào khoảng 22 giờ trước - 12 phút đọc</div>
       </div>
-      <h1 className={styles["title"]}>{post?.title}</h1>
-      <div
-        style={{ maxWidth: "100%" }}
-        className={styles["content"]}
-        dangerouslySetInnerHTML={{
-          __html: post?.content ? post.content : "",
-        }}
-      ></div>
+      <Typography.Title>{post?.title}</Typography.Title>
+      <Typography.Paragraph>
+        <div
+          style={{ maxWidth: "100%" }}
+          className={styles["content"]}
+          dangerouslySetInnerHTML={{
+            __html: post?.content ? post.content : "",
+          }}
+        />
+      </Typography.Paragraph>
       <div ref={postContentRef}></div>
       <div style={{ marginTop: "50px" }}>
         {post?.tags &&

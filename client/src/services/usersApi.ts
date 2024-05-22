@@ -19,13 +19,10 @@ const fetchUser = async () => {
   }
 };
 
-const fetchUsersWithPagination = async (
-  current: number = 1,
-  pageSize: number = 5
-) => {
+const fetchUsersWithPagination = async (qs?: string) => {
   try {
     const res = await axiosInstance.get<IBackendRes<IPagination<IUser>>>(
-      `/users?current=${current}&pageSize=${pageSize}`
+      `/users?${qs}`
     );
     return res;
   } catch (error) {
@@ -44,6 +41,12 @@ const getUserById = async (id: string, visitorId?: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+const getUserByEmail = async (email: string) => {
+  return await axiosInstance.get<IBackendRes<IPagination<IUser>>>(
+    `/users?email=${email}&current=1&pageSize=1`
+  );
 };
 
 const handleFollowUserById = async (
@@ -103,6 +106,7 @@ export {
   fetchUser,
   fetchUsersWithPagination,
   getUserById,
+  getUserByEmail,
   fetchFollowersOfUserById,
   handleFollowUserById,
   updateUserById,

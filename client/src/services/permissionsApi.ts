@@ -1,4 +1,5 @@
-import { IBackendRes, IGroupedPermission } from "../types/backend";
+import { IBackendRes, IGroupedPermission, IPermission } from "../types/backend";
+import { CreatePermissionDto } from "../types/dtos";
 import axiosInstance from "./config";
 
 export const getGroupedPermissions = async () => {
@@ -10,4 +11,13 @@ export const getGroupedPermissions = async () => {
     console.error(error);
     return null;
   }
+};
+
+export const createNewPermission = async (
+  createPermissionDto: CreatePermissionDto
+) => {
+  return await axiosInstance.post<IBackendRes<IPermission[]>>(
+    "/permissions",
+    createPermissionDto
+  );
 };

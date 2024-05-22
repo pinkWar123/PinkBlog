@@ -56,6 +56,9 @@ export interface ITag {
   value: string;
   _id: string;
   createdAt: Date;
+  color: string;
+  description?: string;
+  image?: PublicFile;
 }
 
 export interface IPost {
@@ -71,6 +74,7 @@ export interface IPost {
   };
   createdAt: Date;
   updatedAt: Date;
+  status: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export interface IComment {
@@ -139,4 +143,9 @@ export interface ISingleRole {
 export interface IGroupedPermission {
   _id: string;
   permissions: IPermission[];
+}
+
+export interface PublicFile {
+  url: string;
+  key?: string;
 }
