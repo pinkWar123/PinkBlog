@@ -1,6 +1,12 @@
 import { Modal } from "antd";
-import { IBackendRes, IPagination, IPost } from "../types/backend";
+import {
+  IBackendRes,
+  IPagination,
+  IPost,
+  IUpdateResponse,
+} from "../types/backend";
 import axiosInstance from "./config";
+import { UpdatePostDto } from "../types/dtos";
 
 const createPost = async (
   title: string,
@@ -24,30 +30,23 @@ const createPost = async (
   }
 };
 
-const fetchPublicPosts = async (current: number = 0, pageSize: number = 10) => {
-  try {
-    const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
-      "posts?populate=createdBy,tags",
-      {
-        params: {
-          current,
-          pageSize,
-        },
-      }
-    );
-    return res;
-  } catch (error: Error | any) {
-    console.log(error);
-    Modal.error({
-      title: error?.message,
-    });
-  }
+const fetchPublicPosts = async () => {
+  const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+    "posts?populate=createdBy,tags&access=public"
+  );
+  return res;
+};
+
+const fetchPosts = async (qs?: string) => {
+  return await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+    `posts?${qs ?? ""}`
+  );
 };
 
 const fetchLatestPosts = async (current: number = 0, pageSize: number = 10) => {
   try {
     const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
-      "posts?sort=-createdAt",
+      "posts?sort=-createdAt&access=public&status=APPROVED",
       {
         params: {
           current,
@@ -84,13 +83,20 @@ const fetchPostsByAuthorId = async (
 ) => {
   try {
     const res = await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
-      `posts?createdBy=${authorId}&current=${current}&pageSize=${pageSize}`
+      `posts?createdBy=${authorId}&current=${current}&pageSize=${pageSize}&access=public&status=APPROVED`
     );
     return res;
   } catch (error) {
     console.log(error);
     return null;
   }
+};
+
+const updatePostById = async (id: string, updatePostDto: UpdatePostDto) => {
+  return await axiosInstance.patch<IBackendRes<IUpdateResponse>>(
+    `posts/${id}`,
+    updatePostDto
+  );
 };
 
 const upvote = async (_id: string) => {
@@ -131,6 +137,8 @@ export {
   fetchPostById,
   fetchLatestPosts,
   fetchPostsByAuthorId,
+  updatePostById,
+  fetchPosts,
   upvote,
   downvote,
 };

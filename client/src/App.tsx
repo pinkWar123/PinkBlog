@@ -19,6 +19,11 @@ import {
 import { ShowTopPostsProvider } from "./context/top-posts";
 import ProfileLayout from "./layouts/ProfileLayout/ProfileLayout";
 import Followers from "./pages/ProfilePage/Followers";
+import AdminLayout from "./layouts/AdminLayout/AdminLayout";
+import User from "./pages/AdminPage/User";
+import Tags from "./pages/AdminPage/Tags/Tags";
+import Roles from "./pages/AdminPage/Roles/Roles";
+import { default as PostControl } from "./pages/AdminPage/Posts";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -26,11 +31,10 @@ export default function App() {
     const fetchUserRes = async () => {
       const res = await getUserInfo();
       if (res?.status === 200) {
-        const _user = res.data.data;
+        const _user = res?.data?.data;
         console.log(_user);
         setUser({ ..._user } as UserContextType["user"]);
       }
-      console.log(res?.data.data);
     };
     fetchUserRes();
   }, [setUser]);
@@ -58,16 +62,26 @@ export default function App() {
 
               <Route path="*" element={<NotFound />} />
             </Route>
+
             <Route path="auth" element={<AuthLayout></AuthLayout>}>
               <Route index element={<Auth />} />
               <Route path="register" element={<Register />} />
             </Route>
 
             <Route path="edit" element={<EditLayout />} />
+
             <Route path="profile/:id" element={<ProfileLayout />}>
               <Route index element={<Posts />} />
               <Route path="followers" element={<Followers />} />
             </Route>
+
+            <Route path="admin" element={<AdminLayout />}>
+              <Route path="users" element={<User />} />
+              <Route path="tags" element={<Tags />} />
+              <Route path="roles" element={<Roles />} />
+              <Route path="posts" element={<PostControl />} />
+            </Route>
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         </UserStateContext.Provider>

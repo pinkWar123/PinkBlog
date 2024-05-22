@@ -66,7 +66,7 @@ const FloatSider: React.FC<{ post: IPost | undefined }> = ({ post }) => {
       {showSideAvatar && (
         <div>
           <div>
-            <Avatar src={post?.createdBy.profileImageUrl} size={40} />
+            <Avatar src={post?.createdBy?.profileImageUrl} size={40} />
           </div>
           <Tooltip color="geekblue" title="Upvote" placement="right">
             <div

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -221,8 +225,13 @@ export class CommentsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findCommentById(id: string) {
+    try {
+      const res = await this.commentModel.findById(id);
+      return res;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   async upvote(user: IUser, voteDto: VoteDto) {
@@ -283,11 +292,47 @@ export class CommentsService {
     }
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async updateCommentById(
+    id: string,
+    updateCommentDto: UpdateCommentDto,
+    user: IUser,
+  ) {
+    try {
+      const targetComment = await this.commentModel.findById(id);
+      if (!targetComment)
+        throw new BadRequestException(`Comment ${id} not found`);
+
+      if (user._id !== targetComment.createdBy.toString()) {
+        throw new ForbiddenException(
+          'Only the owner of the comment can update the comment',
+        );
+      }
+
+      const res = await this.commentModel.updateOne(
+        { _id: id },
+        {
+          ...updateCommentDto,
+          updatedBy: user._id,
+        },
+      );
+      return res;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async removeCommentById(id: string, user: IUser) {
+    try {
+      await this.commentModel.updateOne(
+        { _id: id },
+        {
+          deletedBy: user._id,
+        },
+      );
+      const res = await this.commentModel.softDelete({ _id: id });
+      return res;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }

@@ -12,14 +12,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    const res: any = exception.getResponse();
     const status = exception.getStatus();
 
     response.status(status).json({
-      statusCode: status,
+      status: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      error: 'Not supported file',
-      message: 'File is too large, or the file type is not supported',
+      error: res,
     });
   }
 }

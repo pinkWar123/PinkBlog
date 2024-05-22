@@ -129,8 +129,8 @@ const MainHeader: React.FC = () => {
               >
                 {user.profileImageUrl ? (
                   <Avatar
-                    crossOrigin="anonymous"
-                    src={`http://localhost:8000/public/images/profile/${user.profileImageUrl}`}
+                    // crossOrigin="anonymous"
+                    src={`${user.profileImageUrl}`}
                   />
                 ) : (
                   <Avatar>{user.username}</Avatar>

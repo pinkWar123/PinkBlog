@@ -42,7 +42,6 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [progress, setProgress] = useState<number>(0);
   const { setUser } = useContext(UserStateContext);
-  console.log(registerInfo);
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
@@ -79,7 +78,7 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
       },
     };
     try {
-      const res = await uploadSingleFile(file, config);
+      const res = await uploadSingleFile(file, "profile", config);
       onSuccess("Ok");
       const fileName: string | undefined = res?.data?.data?.fileName;
       console.log(fileName);

@@ -16,7 +16,7 @@ const TagDebounceSelect: React.FC<IProps> = ({ tags, setTags }: IProps) => {
   const fetchTagList = async (value: string): Promise<TagValue[]> => {
     if (value === "") return [];
     const res = await getTagsByRegex(value, 5);
-    if (res && res.data.data && res.data.data.result.length > 0) {
+    if (res && res?.data?.data && res.data.data.result.length > 0) {
       return res.data.data.result.map((tag) => ({
         label: tag.value,
         value: tag._id,

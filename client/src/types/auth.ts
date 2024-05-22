@@ -10,6 +10,7 @@ export interface UserRegisterDto {
   description?: string;
   age: number;
   profileImageUrl?: string;
+  role?: string;
 }
 
 export type User = {

@@ -31,7 +31,7 @@ const PostItem: React.FC<IProps> = ({
           avatar={
             <Avatar
               src={
-                createdBy.profileImageUrl
+                createdBy?.profileImageUrl
                   ? createdBy.profileImageUrl
                   : "https://placehold.co/600x400"
               }
@@ -46,7 +46,7 @@ const PostItem: React.FC<IProps> = ({
                 flexWrap: "wrap",
               }}
             >
-              <div style={{ textAlign: "center" }}>{createdBy.username}</div>
+              <div style={{ textAlign: "center" }}>{createdBy?.username}</div>
               <div
                 style={{
                   color: "rgba(0,0,0,0.3)",

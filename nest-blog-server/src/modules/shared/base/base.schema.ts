@@ -15,15 +15,15 @@ export class BaseEntity {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: User.name,
+    ref: () => User.name,
     default: null,
     select: '_id username',
   })
-  createdBy: mongoose.Schema.Types.ObjectId | User;
+  createdBy: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: User.name,
+    ref: () => User.name,
     default: null,
     select: '_id username',
   })
@@ -31,7 +31,7 @@ export class BaseEntity {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: User.name,
+    ref: () => User.name,
     default: null,
     select: '_id username',
   })

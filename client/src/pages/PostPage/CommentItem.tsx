@@ -59,7 +59,7 @@ const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
         if (prev?.length === 0 || res.data.data === undefined) return prev;
         return (
           prev?.map((_comment) => {
-            if (comment._id === _comment._id) {
+            if (comment?._id === _comment?._id) {
               if (res.data.data) {
                 if (_comment.children?.length > 0)
                   _comment.children = [..._comment.children, ...res.data.data];
@@ -167,10 +167,10 @@ const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
           <UserAvatar src={comment.createdBy?.profileImageUrl} size={40} />
           <div style={{ marginLeft: "12px" }}>
             <a
-              href={`http://localhost:3000/profile/${comment.createdBy._id}`}
+              href={`http://localhost:3000/profile/${comment?.createdBy?._id}`}
               style={{ paddingBottom: "12px" }}
             >
-              {comment.createdBy.username}
+              {comment?.createdBy?.username}
             </a>
             <div
               style={{

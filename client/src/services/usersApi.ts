@@ -1,4 +1,10 @@
-import { IBackendRes, IFollower, IPagination, IUser } from "../types/backend";
+import {
+  IBackendRes,
+  IFollower,
+  IPagination,
+  IUpdateResponse,
+  IUser,
+} from "../types/backend";
 import axiosInstance from "./config";
 
 const fetchUser = async () => {
@@ -13,6 +19,18 @@ const fetchUser = async () => {
   }
 };
 
+const fetchUsersWithPagination = async (qs?: string) => {
+  try {
+    const res = await axiosInstance.get<IBackendRes<IPagination<IUser>>>(
+      `/users?${qs}`
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 const getUserById = async (id: string, visitorId?: string) => {
   try {
     const uri = visitorId
@@ -23,6 +41,12 @@ const getUserById = async (id: string, visitorId?: string) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+const getUserByEmail = async (email: string) => {
+  return await axiosInstance.get<IBackendRes<IPagination<IUser>>>(
+    `/users?email=${email}&current=1&pageSize=1`
+  );
 };
 
 const handleFollowUserById = async (
@@ -57,9 +81,34 @@ const fetchFollowersOfUserById = async (
   }
 };
 
+const updateUserById = async (id: string, createUserDto: IUser) => {
+  const res = await axiosInstance.patch<IBackendRes<IUpdateResponse>>(
+    `/users/${id}`,
+    createUserDto
+  );
+  return res;
+};
+
+const deleteUserById = async (id: string) => {
+  console.log(id);
+  try {
+    const res = await axiosInstance.delete<IBackendRes<{ deleted: number }>>(
+      `/users/${id}`
+    );
+    return res;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};
+
 export {
   fetchUser,
+  fetchUsersWithPagination,
   getUserById,
+  getUserByEmail,
   fetchFollowersOfUserById,
   handleFollowUserById,
+  updateUserById,
+  deleteUserById,
 };

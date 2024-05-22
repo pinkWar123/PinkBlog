@@ -4,6 +4,9 @@ import { UsersController } from './users.controller';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { User, UserSchema, UserSchemaFactory } from './schemas/user.schema';
 import { PostSchema } from '@modules/posts/schemas/post.schema';
+import { AuthService } from '@modules/auth/auth.service';
+import { AuthModule } from '@modules/auth/auth.module';
+import { Role, RoleSchema } from '@modules/roles/schemas/role.schema';
 
 @Module({
   imports: [
@@ -15,6 +18,12 @@ import { PostSchema } from '@modules/posts/schemas/post.schema';
         imports: [
           MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
         ],
+      },
+    ]),
+    MongooseModule.forFeature([
+      {
+        name: Role.name,
+        schema: RoleSchema,
       },
     ]),
   ],

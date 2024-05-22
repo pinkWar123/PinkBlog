@@ -1,13 +1,16 @@
 import { PostDocument } from '@modules/posts/schemas/post.schema';
+import { Role } from '@modules/roles/schemas/role.schema';
 import { BaseEntity } from '@modules/shared/base/base.schema';
+import { ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform, Type } from 'class-transformer';
 import { NextFunction } from 'express';
-import mongoose, { HydratedDocument, Model } from 'mongoose';
+import mongoose, { HydratedDocument, Model, ObjectId } from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true })
+@UseInterceptors(ClassSerializerInterceptor)
 export class User {
   @Prop({
     required: false,
@@ -32,11 +35,14 @@ export class User {
   })
   profileImageUrl?: string;
 
+  @Prop()
+  profileImageKey?: string;
+
   @Prop({ maxlength: 500 })
   description?: string;
 
-  @Prop()
-  role?: mongoose.Schema.Types.ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Role.name })
+  role: string;
 
   @Prop()
   refreshToken?: string;

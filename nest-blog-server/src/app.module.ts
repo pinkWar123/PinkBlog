@@ -14,6 +14,9 @@ import { join } from 'path';
 import { TagsModule } from '@modules/tags/tags.module';
 import { PostsModule } from '@modules/posts/posts.module';
 import { CommentsModule } from '@modules/comments/comments.module';
+import { PermissionsModule } from '@modules/permissions/permissions.module';
+import { RolesModule } from '@modules/roles/roles.module';
+import { SeedingModule } from '@modules/seeding/seeding.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -38,6 +41,9 @@ import { CommentsModule } from '@modules/comments/comments.module';
     TagsModule,
     PostsModule,
     CommentsModule,
+    PermissionsModule,
+    RolesModule,
+    SeedingModule,
   ],
   controllers: [AppController],
   providers: [

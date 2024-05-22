@@ -3,8 +3,10 @@ import {
   MulterModuleOptions,
   MulterOptionsFactory,
 } from '@nestjs/platform-express';
+import { S3 } from 'aws-sdk';
 import fs from 'fs';
 import { diskStorage } from 'multer';
+import multerS3 from 'multer-s3';
 import path, { join } from 'path';
 @Injectable()
 export class MulterConfigService implements MulterOptionsFactory {
@@ -35,21 +37,29 @@ export class MulterConfigService implements MulterOptionsFactory {
     });
   }
   createMulterOptions(): MulterModuleOptions {
+    const s3 = new S3();
+
     return {
-      storage: diskStorage({
-        destination: (req, file, cb) => {
+      storage: multerS3({
+        s3: s3,
+        bucket: 's3://pink-blog',
+        acl: 'public-read',
+        key: (req, file, cb) => {
           const folder = req?.headers?.folder_type ?? 'default';
-          this.ensureExists(`public/images/${folder}`);
-          cb(null, join(this.getRootPath(), `public/images/${folder}`));
-        },
-        filename: (req, file, cb) => {
-          //get image extension
           const extName = path.extname(file.originalname);
           //get image's name (without extension)
           const baseName = path.basename(file.originalname, extName);
           const finalName = `${baseName}-${Date.now()}${extName}`;
-          cb(null, finalName);
+          cb(null, `${folder}/${finalName}`);
         },
+        // filename: (req, file, cb) => {
+        //   //get image extension
+        //   const extName = path.extname(file.originalname);
+        //   //get image's name (without extension)
+        //   const baseName = path.basename(file.originalname, extName);
+        //   const finalName = `${baseName}-${Date.now()}${extName}`;
+        //   cb(null, finalName);
+        // },
       }),
       fileFilter: (req, file, cb) => {
         const allowedFileTypes = [

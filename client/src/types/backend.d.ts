@@ -1,5 +1,9 @@
+import { AxiosError } from "axios";
+
 export interface IBackendRes<T> {
-  error?: string | string[];
+  error?: {
+    message: string;
+  };
   message: string;
   statusCode: number | string;
   data?: T;
@@ -14,8 +18,17 @@ export interface IPagination<T> {
   result: T[];
 }
 
+export interface IUpdateResponse {
+  acknowledge: boolean;
+  modifiedCount: number;
+  upsertedId: string;
+  upsertedCount: number;
+  matchedCount: number;
+}
+
 export interface IUser {
   accessToken?: string;
+  age: number;
   _id: string;
   username: string;
   sub?: string;
@@ -25,6 +38,10 @@ export interface IUser {
   numOfFollowers: number;
   reputation: number;
   numOfPosts: number;
+  role: {
+    _id: string;
+    name: string;
+  };
 }
 
 export interface IRegister {
@@ -38,6 +55,10 @@ export interface IRegister {
 export interface ITag {
   value: string;
   _id: string;
+  createdAt: Date;
+  color: string;
+  description?: string;
+  image?: PublicFile;
 }
 
 export interface IPost {
@@ -53,6 +74,7 @@ export interface IPost {
   };
   createdAt: Date;
   updatedAt: Date;
+  status: "PENDING" | "APPROVED" | "REJECTED";
 }
 
 export interface IComment {
@@ -91,4 +113,39 @@ export interface IFollower {
   numOfFollowers: number;
   reputation: number;
   profileImageUrl: string;
+}
+
+export interface IPermission {
+  _id: string;
+  apiPath: string;
+  name: string;
+  method: "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
+  module: string;
+  createdAt: Date;
+}
+
+export interface IRole {
+  _id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  permissions: string[];
+}
+
+export interface ISingleRole {
+  _id: string;
+  name: string;
+  description: string;
+  isActive: boolean;
+  permissions: IPermission[];
+}
+
+export interface IGroupedPermission {
+  _id: string;
+  permissions: IPermission[];
+}
+
+export interface PublicFile {
+  url: string;
+  key?: string;
 }

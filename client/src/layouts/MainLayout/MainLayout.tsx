@@ -23,7 +23,7 @@ import UserStateContext from "../../context/users/UserContext";
 import { getUserInfo } from "../../services/authApi";
 import { UserStateProvider } from "../../context";
 import { IPost } from "../../types/backend";
-import { fetchPublicPosts } from "../../services/postsApi";
+import { fetchLatestPosts, fetchPublicPosts } from "../../services/postsApi";
 import ShowTopPostsContext from "../../context/top-posts/ShowTopPostContext";
 const { Header, Footer, Sider, Content } = Layout;
 
@@ -74,7 +74,7 @@ const MainLayout: React.FC = () => {
   const { showTopPosts } = useContext(ShowTopPostsContext);
   useEffect(() => {
     const fetchTopPosts = async () => {
-      const res = await fetchPublicPosts(0, 3);
+      const res = await fetchLatestPosts(0, 3);
       if (res?.status === 200) {
         setTopPosts(res.data.data?.result);
       }

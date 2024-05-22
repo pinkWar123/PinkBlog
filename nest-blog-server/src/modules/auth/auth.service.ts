@@ -6,6 +6,7 @@ import { IUser } from 'src/types/user.type';
 import { UserRegisterDto } from '@modules/users/dto/create-user.dto';
 import { UsersService } from '@modules/users/users.service';
 import ms from 'ms';
+import { RolesService } from '@modules/roles/roles.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
+    private roleService: RolesService,
   ) {}
 
   async validateUser(username: string, pass: string) {
@@ -20,8 +22,12 @@ export class AuthService {
     if (user) {
       const isValid = this.usersService.isValidPassword(pass, user.password);
       if (isValid) {
+        const userRole = user.role as unknown as { _id: string; name: string };
+        const role = await this.roleService.findRoleById(userRole?._id);
+
         const userObj = {
           ...user.toObject(),
+          permissions: role?.permissions ?? [],
         };
         return userObj;
       }
@@ -39,7 +45,8 @@ export class AuthService {
   }
 
   async login(user: IUser, res: Response) {
-    const { _id, username } = user;
+    const { _id, username, role, permissions } = user;
+
     const _user = await this.usersService.findOne(username);
     let profileImageUrl = null;
     if (_user && _user.profileImageUrl) {
@@ -51,6 +58,7 @@ export class AuthService {
       _id: _id,
       sub: 'token login',
       iss: 'from server',
+      role,
     };
     console.log(payload);
     const refreshToken = this.createRefreshToken(payload);
@@ -70,6 +78,8 @@ export class AuthService {
       username: username,
       sub: 'token login',
       iss: 'from server',
+      role,
+      permissions,
     };
   }
 
@@ -92,6 +102,7 @@ export class AuthService {
           _id: user._id,
           sub: 'token login',
           iss: 'from server',
+          role: user.role,
         };
         const refreshToken = this.createRefreshToken(payload);
         await this.usersService.updateUserRefreshToken(
@@ -111,6 +122,7 @@ export class AuthService {
           username: user.username,
           sub: 'token login',
           iss: 'from server',
+          role: user.role,
         };
       }
     } catch (error) {
