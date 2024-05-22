@@ -35,6 +35,9 @@ export class User {
   })
   profileImageUrl?: string;
 
+  @Prop()
+  profileImageKey?: string;
+
   @Prop({ maxlength: 500 })
   description?: string;
 

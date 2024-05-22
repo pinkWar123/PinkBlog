@@ -31,14 +31,24 @@ export class Post extends BaseEntity {
     enum: ['public', 'private'],
     required: true,
     default: 'public', // Optional: Set a default value
-    validate: {
-      validator: function (value) {
-        return value === 'public' || value === 'private';
-      },
-      message: 'Access must be either "public" or "private"',
-    },
   })
   access: string;
+
+  @Prop({
+    type: String,
+    enum: ['PENDING', 'REJECTED', 'APPROVED'],
+    required: true,
+    default: 'PENDING',
+    validate: {
+      validator: function (value) {
+        return (
+          value === 'PENDING' || value === 'REJECTED' || value === 'APPROVED'
+        );
+      },
+      message: 'Status must be  either "PENDING" or "REJECTED" or "APPROVED"',
+    },
+  })
+  status: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

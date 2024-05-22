@@ -31,6 +31,7 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
   ParseFilePipe,
   Post,
   Request,
@@ -49,6 +50,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
+  @Public()
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   @ResponseMessage('This api returns the url of the uploaded file')
@@ -57,7 +59,7 @@ export class UploadController {
       new ParseFilePipe({
         validators: [
           // new MaxFileSizeValidator({ maxSize: 1000 }),
-          // new FileTypeValidator({ fileType: 'image/jpeg' }),
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
         ],
       }),
     )
@@ -66,11 +68,7 @@ export class UploadController {
   ) {
     const folder_type = req?.headers?.folder_type ?? 'default';
     console.log(folder_type);
-    return await this.uploadService.upload(
-      req,
-      folder_type + '/' + file.originalname,
-      file,
-    );
+    return await this.uploadService.upload(folder_type, file);
   }
 
   @Public()

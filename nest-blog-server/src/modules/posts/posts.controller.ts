@@ -61,8 +61,13 @@ export class PostsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  @ResponseMessage('This API returns the result of updating a post by a user')
+  updatePostById(
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+    @User() user: IUser,
+  ) {
+    return this.postsService.updatePostById(id, updatePostDto, user);
   }
 
   @Delete(':id')

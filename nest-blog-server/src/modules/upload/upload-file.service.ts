@@ -54,8 +54,7 @@ export class UploadService {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async upload(req: any, fileName: string, file: Express.Multer.File) {
-    const folder = req?.headers?.folder_type ?? 'default';
+  async upload(folder: string, file: Express.Multer.File) {
     const extName = path.extname(file.originalname);
     //get image's name (without extension)
     const baseName = path.basename(file.originalname, extName);
@@ -78,17 +77,16 @@ export class UploadService {
     const region = this.configService.getOrThrow('AWS_S3_REGION');
 
     return {
-      fileName: `https://${bucketName}.s3.${region}.amazonaws.com/${folder}/${encodeFileName}`,
+      url: `https://${bucketName}.s3.${region}.amazonaws.com/${folder}/${encodeFileName}`,
       key: finalName,
     };
   }
 
   async remove(deleteDto: DeleteDto) {
-    const folderName = deleteDto.folder ? deleteDto.folder : 'default';
     const res = await this.s3Client.send(
       new DeleteObjectCommand({
         Bucket: this.configService.get('AWS_S3_PUBLIC_BUCKET'),
-        Key: folderName + '/' + deleteDto.key,
+        Key: deleteDto.key,
       }),
     );
   }

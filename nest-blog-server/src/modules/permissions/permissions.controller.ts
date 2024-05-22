@@ -16,6 +16,7 @@ import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
 import { ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorators/public';
 
 @ApiTags('Permissions')
 @Controller('permissions')
@@ -43,6 +44,13 @@ export class PermissionsController {
       pageSize,
       qs,
     );
+  }
+
+  @Public()
+  @Get('grouped-by-module')
+  @ResponseMessage('This API returns all permissions grouped by module')
+  findGroupedPermissions() {
+    return this.permissionsService.findGroupedPermissions();
   }
 
   @Get(':id')

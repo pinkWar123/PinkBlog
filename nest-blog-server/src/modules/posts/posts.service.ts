@@ -23,6 +23,7 @@ export class PostsService {
       const res = await this.postModel.create({
         ...createPostDto,
         createdBy: user._id,
+        status: createPostDto.status ? createPostDto.status : 'PENDING',
       });
       // await res.populate('tags');
       // const tags = res.tags.map(tag: => {
@@ -52,46 +53,39 @@ export class PostsService {
   }
 
   async findAll(pageSize: number, current: number, qs: string) {
-    try {
-      const { filter, population, projection } = aqp(qs);
-      delete filter.pageSize;
-      delete filter.current;
-      const { sort }: { sort: any } = aqp(qs);
-      const totalItems = await this.postModel.count({
-        ...filter,
-        access: 'public',
-      });
-      console.log(filter);
-      const totalPages = Math.ceil(totalItems / pageSize);
-      const calculatedSkip = (current - 1) * pageSize;
+    const { filter, population, projection } = aqp(qs);
+    delete filter.pageSize;
+    delete filter.current;
+    const { sort }: { sort: any } = aqp(qs);
+    const totalItems = await this.postModel.count({
+      ...filter,
+    });
+    console.log(filter);
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const calculatedSkip = (current - 1) * pageSize;
 
-      const posts = await this.postModel
-        .find({ ...filter, access: 'public' })
-        .skip(calculatedSkip > 0 ? calculatedSkip : 0)
-        .limit(pageSize)
-        .sort(sort)
-        .select({
-          createdAt: 1,
-          createdBy: 1,
-          tags: 1,
-          title: 1,
-          updatedAt: 1,
-          _id: 1,
-        })
-        .populate('createdBy', '_id username profileImageUrl')
-        .populate('tags', 'value _id')
-        .exec();
-      return {
-        meta: {
-          pageSize,
-          pages: totalPages,
-          total: totalItems,
+    const posts = await this.postModel
+      .find({ ...filter })
+      .skip(calculatedSkip > 0 ? calculatedSkip : 0)
+      .limit(pageSize)
+      .sort(sort)
+      .select(projection)
+      .populate([
+        {
+          path: 'createdBy',
+          select: '_id username',
         },
-        result: posts,
-      };
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+      ])
+      .populate('tags')
+      .exec();
+    return {
+      meta: {
+        pageSize,
+        pages: totalPages,
+        total: totalItems,
+      },
+      result: posts,
+    };
   }
 
   async findPostById(id: string) {
@@ -110,8 +104,12 @@ export class PostsService {
     }
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async updatePostById(id: string, updatePostDto: UpdatePostDto, user: IUser) {
+    const res = await this.postModel.updateOne(
+      { _id: id },
+      { ...updatePostDto, updatedBy: user._id },
+    );
+    return res;
   }
 
   async upvote(user: IUser, voteDto: VoteDto) {

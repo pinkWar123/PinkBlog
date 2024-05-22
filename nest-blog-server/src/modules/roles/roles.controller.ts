@@ -15,7 +15,8 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Public } from 'src/decorators/public';
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -28,16 +29,31 @@ export class RolesController {
     return this.rolesService.create(createRoleDto, user);
   }
 
+  @Public()
   @Get()
+  @ApiQuery({
+    name: 'current',
+    type: String,
+    description: 'Optional',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    type: String,
+    description: 'Optional',
+    required: false,
+  })
   @ResponseMessage('This API returns a list of roles with pagination')
+  // @ApiQuery()
   findRolesWithPagination(
-    @Query('current', ParseIntPipe) current: number,
-    @Query('pageSize', ParseIntPipe) pageSize: number,
     @Query() qs: string,
+    @Query('current') current?: number | undefined,
+    @Query('pageSize') pageSize?: number | undefined,
   ) {
     return this.rolesService.findRolesWithPagination(current, pageSize, qs);
   }
 
+  @Public()
   @Get(':id')
   @ResponseMessage('This API returns a roles by ID')
   findRoleById(@Param('id') id: string) {

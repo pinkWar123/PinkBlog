@@ -33,5 +33,6 @@ import { ApiTags } from '@nestjs/swagger';
     // },
   ],
   // imports: [MulterModule.registerAsync({ useClass: MulterConfigService })],
+  exports: [UploadService],
 })
 export class UploadModule {}

@@ -6,10 +6,12 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MaxLength,
 } from 'class-validator';
 
 export class CreateRoleDto {
   @IsString()
+  @MaxLength(10, { message: 'Name must contain at most 10 characters' })
   @IsNotEmpty()
   @ApiProperty({
     example: 'USER',
@@ -18,6 +20,7 @@ export class CreateRoleDto {
   name: string;
 
   @IsString()
+  @MaxLength(100, { message: 'Name must contain at most 100 characters' })
   @IsOptional()
   @ApiProperty({
     description: 'This is the optional description of the role',

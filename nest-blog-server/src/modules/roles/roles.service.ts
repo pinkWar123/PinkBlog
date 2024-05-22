@@ -42,30 +42,30 @@ export class RolesService {
   }
 
   async create(createRoleDto: CreateRoleDto, user: IUser) {
-    try {
-      const { name, permissions } = createRoleDto;
-      await this.checkDuplicateRoleName(name);
-      await this.checkValidPermissionIds(permissions);
+    const { name, permissions } = createRoleDto;
+    await this.checkDuplicateRoleName(name);
+    await this.checkValidPermissionIds(permissions);
 
-      const res = await this.roleModel.create({
-        ...createRoleDto,
-        createdBy: user._id,
-      });
-      return res;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    const res = await this.roleModel.create({
+      ...createRoleDto,
+      createdBy: user._id,
+    });
+    return res;
   }
 
-  async findRolesWithPagination(current: number, pageSize: number, qs: string) {
+  async findRolesWithPagination(
+    current: number | undefined,
+    pageSize: number | undefined,
+    qs: string,
+  ) {
     try {
       const { population, projection, filter } = aqp(qs);
       const { sort }: { sort: any } = aqp(qs);
-      const totalItems = await this.roleModel.count({ ...filter });
-      const totalPages = Math.ceil(totalItems / pageSize);
-      const calculatedSkip = (current - 1) * pageSize;
       delete filter.pageSize;
       delete filter.current;
+      const totalItems = await this.roleModel.count({ ...filter });
+      const totalPages = pageSize ? Math.ceil(totalItems / pageSize) : 1;
+      const calculatedSkip = current ? (current - 1) * pageSize : 0;
 
       const roles = await this.roleModel
         .find({ ...filter })
@@ -88,49 +88,38 @@ export class RolesService {
   }
 
   async findRoleById(id: string) {
-    try {
-      const res = await this.roleModel.findById(id).populate('permissions');
-      return res;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    const res = await this.roleModel.findById(id).populate('permissions');
+    console.log(res);
+    return res;
   }
 
   async updateRoleById(id: string, updateRoleDto: UpdateRoleDto, user: IUser) {
-    try {
-      const { name, permissions } = updateRoleDto;
-      await this.checkDuplicateRoleName(name);
-      await this.checkValidPermissionIds(permissions);
+    const { name, permissions } = updateRoleDto;
+    // await this.checkDuplicateRoleName(name);
+    await this.checkValidPermissionIds(permissions);
 
-      const res = await this.roleModel.updateOne(
-        { _id: id },
-        {
-          ...updateRoleDto,
-          updatedBy: user._id,
-        },
-      );
-      return res;
-    } catch (error) {
-      throw new Error(error.message);
-    }
+    const res = await this.roleModel.updateOne(
+      { _id: id },
+      {
+        ...updateRoleDto,
+        updatedBy: user._id,
+      },
+    );
+    return res;
   }
 
   async removeRoleById(id: string, user: IUser) {
-    try {
-      const targetRole = await this.roleModel.findById(id);
-      if (targetRole.name === ROLE.ADMIN) {
-        throw new BadRequestException('Cannot delete admin role');
-      }
-      await this.roleModel.updateOne(
-        { _id: id },
-        {
-          deletedBy: user._id,
-        },
-      );
-      const res = await this.roleModel.softDelete({ _id: id });
-      return res;
-    } catch (error) {
-      throw new Error(error.message);
+    const targetRole = await this.roleModel.findById(id);
+    if (targetRole.name === ROLE.ADMIN) {
+      throw new BadRequestException('Cannot delete admin role');
     }
+    await this.roleModel.updateOne(
+      { _id: id },
+      {
+        deletedBy: user._id,
+      },
+    );
+    const res = await this.roleModel.softDelete({ _id: id });
+    return res;
   }
 }

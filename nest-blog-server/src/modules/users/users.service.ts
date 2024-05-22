@@ -74,11 +74,11 @@ export class UsersService {
           total: totalItems,
         },
         result: users.map((user, index) => {
-          const role = roles[index].toObject();
+          const role = roles[index]?.toObject();
           return {
             ...user,
-            _id: user._id.toString(),
-            role: { ...role, _id: role._id.toString() },
+            _id: user?._id.toString(),
+            role: { ...role, _id: role?._id.toString() },
           };
         }),
       };
@@ -151,15 +151,12 @@ export class UsersService {
     const hasUsernameExisted = await this.hasUsernameExisted(username);
     if (hasUsernameExisted !== null)
       throw new BadRequestException('Username has already existed');
-    try {
-      const res = await this.userModel.create({
-        ...userRegisterDto,
-        password: this.getHashPassword(userRegisterDto.password),
-      });
-      return res;
-    } catch (error) {
-      throw new BadRequestException('Ahihie');
-    }
+
+    const res = await this.userModel.create({
+      ...userRegisterDto,
+      password: this.getHashPassword(userRegisterDto.password),
+    });
+    return res;
   }
 
   async updateUserRefreshToken(_id: string, refreshToken: string) {

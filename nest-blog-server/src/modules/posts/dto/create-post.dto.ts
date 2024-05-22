@@ -3,6 +3,7 @@ import {
   IsArray,
   IsIn,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
@@ -17,7 +18,7 @@ export class CreatePostDto {
     message: 'Title must contain at most 100 characters',
   })
   @MinLength(20, {
-    message: 'Tag must contain at least 20 characters',
+    message: 'Title must contain at least 20 characters',
   })
   @ApiProperty({
     example: 'The mechanism of ReactJS',
@@ -42,7 +43,13 @@ export class CreatePostDto {
   tags: string[];
 
   @IsIn(['public', 'private'], {
-    message: 'Access must be either public or private',
+    message: '_Access must be either public or private',
   })
   access: string;
+
+  @IsIn(['PENDING', 'REJECTED', 'APPROVED'], {
+    message: 'Status must be either PENDING or REJECTED or APPROVED',
+  })
+  @IsOptional()
+  status?: string;
 }

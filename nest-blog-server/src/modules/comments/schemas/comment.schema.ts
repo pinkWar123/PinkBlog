@@ -45,16 +45,6 @@ export class Comment extends BaseEntity {
 
   @Prop({ default: 0 })
   likes: number;
-
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: User.name,
-    default: null,
-
-    // autopopulate: true,
-    select: '_id username',
-  })
-  createdBy: mongoose.Schema.Types.ObjectId | User;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

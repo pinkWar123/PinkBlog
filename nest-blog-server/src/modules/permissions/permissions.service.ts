@@ -78,6 +78,18 @@ export class PermissionsService {
     }
   }
 
+  async findGroupedPermissions() {
+    const res = await this.permissionModel.aggregate([
+      {
+        $group: {
+          _id: '$module',
+          permissions: { $push: '$$ROOT' },
+        },
+      },
+    ]);
+    return res;
+  }
+
   async update(
     id: string,
     updatePermissionDto: UpdatePermissionDto,

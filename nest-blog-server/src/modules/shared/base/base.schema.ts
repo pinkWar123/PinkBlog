@@ -19,7 +19,7 @@ export class BaseEntity {
     default: null,
     select: '_id username',
   })
-  createdBy: mongoose.Schema.Types.ObjectId | User;
+  createdBy: mongoose.Schema.Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
