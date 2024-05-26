@@ -22,7 +22,7 @@ interface PermissionEditProps {
   groupedPermissions: IGroupedPermission[] | undefined;
 }
 
-const renderMethodString = (
+export const renderMethodString = (
   method: "GET" | "PUT" | "POST" | "DELETE" | "PATCH"
 ) => {
   const getColor = (method: string) => {

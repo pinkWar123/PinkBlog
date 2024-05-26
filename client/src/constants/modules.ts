@@ -6,4 +6,5 @@ export const MODULES: string[] = [
   "POSTS",
   "USERS",
   "TAGS",
+  "SERIES",
 ];

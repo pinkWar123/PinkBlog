@@ -31,6 +31,7 @@ export interface IUser {
   age: number;
   _id: string;
   username: string;
+  description?: string;
   sub?: string;
   iat?: string;
   profileImageUrl?: string;
@@ -148,4 +149,16 @@ export interface IGroupedPermission {
 export interface PublicFile {
   url: string;
   key?: string;
+}
+
+export interface ISeries {
+  _id: string;
+  title: string;
+  description: string;
+  posts: IPost[];
+  tags: ITag[];
+  access: string;
+  viewCount: number;
+  createdBy: IUser;
+  createdAt: Date;
 }

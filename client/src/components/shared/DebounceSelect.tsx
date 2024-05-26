@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { Select, Spin } from "antd";
+import { Empty, Select, Spin } from "antd";
 import type { SelectProps } from "antd";
 import debounce from "lodash/debounce";
 
@@ -12,7 +12,7 @@ export interface DebounceSelectProps<ValueType = any>
 function DebounceSelect<
   ValueType extends {
     key?: string;
-    label: React.ReactNode;
+    label: React.ReactNode | JSX.Element;
     value: string | number;
   } = any
 >({
@@ -51,7 +51,7 @@ function DebounceSelect<
       labelInValue
       filterOption={false}
       onSearch={handleInputChange}
-      notFoundContent={fetching ? <Spin size="small" /> : null}
+      notFoundContent={fetching ? <Spin size="small" /> : <Empty />}
       {...props}
       options={options}
     />

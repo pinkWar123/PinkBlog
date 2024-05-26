@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IPost } from "../../types/backend";
 import { fetchPostsByAuthorId } from "../../services/postsApi";
 import PaginationHandler from "../../components/shared/PaginationHandler";
-import { Empty, Result } from "antd";
+import { Empty } from "antd";
 import { PostItem } from "../../components/shared";
 
 const Posts: React.FC = () => {

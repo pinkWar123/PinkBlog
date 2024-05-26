@@ -1,4 +1,4 @@
-import { Pagination, PaginationProps } from "antd";
+import { Col, Pagination, PaginationProps, Row } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -52,25 +52,27 @@ const PaginationHandler: React.FC<PaginationHandlerProps> = ({
     fetchDataWithPagination(pageNumber);
   };
   return (
-    <>
-      {children}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "85%",
-          marginTop: "30px",
-        }}
-      >
-        <Pagination
-          current={current}
-          pageSize={pageSize}
-          total={total}
-          onChange={onChange}
-          style={{ marginTop: "50px", paddingBottom: "50px" }}
-        />
-      </div>
-    </>
+    <Row style={{ width: "100%" }}>
+      <Col span={24}>{children}</Col>
+      <Col span={24}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "85%",
+            marginTop: "30px",
+          }}
+        >
+          <Pagination
+            current={current}
+            pageSize={pageSize}
+            total={total}
+            onChange={onChange}
+            style={{ marginTop: "50px", paddingBottom: "50px" }}
+          />
+        </div>
+      </Col>
+    </Row>
   );
 };
 

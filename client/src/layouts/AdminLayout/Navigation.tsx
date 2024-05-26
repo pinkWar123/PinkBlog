@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import {
   AppstoreOutlined,
+  CheckOutlined,
   MailOutlined,
   SettingOutlined,
   SnippetsOutlined,
@@ -106,6 +107,12 @@ const Navigation: React.FC = () => {
         label: "Roles",
         icon: <TeamOutlined />,
         onClick: () => navigate("/admin/roles"),
+      },
+      {
+        key: "permissions",
+        label: "Permissions",
+        icon: <CheckOutlined />,
+        onClick: () => navigate("/admin/permissions"),
       },
       {
         key: "posts",

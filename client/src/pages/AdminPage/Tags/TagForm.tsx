@@ -78,8 +78,9 @@ const TagForm: React.FC<TagFormProps> = ({
             const color: Color = value?.color?.metaColor;
             const dto = { ...value };
             if (color) dto.color = color.toHex(true);
+            console.log(dto?.color);
             const image =
-              fileList.length > 0 ? (fileList[0] as FileType) : undefined;
+              fileList?.length > 0 ? (fileList[0] as FileType) : undefined;
             const bodyFormData = new FormData();
             if (image && image.uid !== "default")
               bodyFormData.append("file", image as FileType);
@@ -92,6 +93,7 @@ const TagForm: React.FC<TagFormProps> = ({
               },
             };
             let res;
+            console.log(bodyFormData);
             if (type === "add")
               res = await axiosInstance.post<IBackendRes<ITag>>(
                 "/tags",
@@ -136,6 +138,7 @@ const TagForm: React.FC<TagFormProps> = ({
               {
                 validator: async (_, value: string) => {
                   const hasTagExisted = await getTagByValue(value);
+                  if (value === initialValues?.value) return;
                   if (
                     hasTagExisted &&
                     hasTagExisted.data.data &&

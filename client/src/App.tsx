@@ -24,6 +24,11 @@ import User from "./pages/AdminPage/User";
 import Tags from "./pages/AdminPage/Tags/Tags";
 import Roles from "./pages/AdminPage/Roles/Roles";
 import { default as PostControl } from "./pages/AdminPage/Posts";
+import CreateSeries from "./pages/Series/CreateSeries";
+import WithHeaderLayout from "./layouts/WithHeaderLayout";
+import { default as SeriesProfile } from "./pages/ProfilePage/Series";
+import Permissions from "./pages/AdminPage/Permissions/Permissions";
+import { default as SeriesDetail } from "./pages/Series/Series";
 
 export default function App() {
   const [user, setUser] = useState<IUser | undefined>();
@@ -69,10 +74,15 @@ export default function App() {
             </Route>
 
             <Route path="edit" element={<EditLayout />} />
+            <Route path="series" element={<WithHeaderLayout />}>
+              <Route path="create" element={<CreateSeries />} />
+              <Route path=":id" element={<SeriesDetail />} />
+            </Route>
 
             <Route path="profile/:id" element={<ProfileLayout />}>
               <Route index element={<Posts />} />
               <Route path="followers" element={<Followers />} />
+              <Route path="series" element={<SeriesProfile />} />
             </Route>
 
             <Route path="admin" element={<AdminLayout />}>
@@ -80,6 +90,7 @@ export default function App() {
               <Route path="tags" element={<Tags />} />
               <Route path="roles" element={<Roles />} />
               <Route path="posts" element={<PostControl />} />
+              <Route path="permissions" element={<Permissions />} />
             </Route>
 
             <Route path="*" element={<NotFound />} />
