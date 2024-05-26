@@ -17,13 +17,6 @@ export class Tag extends BaseEntity {
   @Prop({ default: 'FF00FF' })
   color: string;
 
-  // @Prop({
-  //   required: false,
-  //   default:
-  //     'https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png',
-  // })
-  // image?: string;
-
   @Prop({
     type: PublicFile,
     default: {

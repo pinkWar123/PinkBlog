@@ -27,8 +27,9 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() userRegisterDto: UserRegisterDto) {
-    return this.usersService.create(userRegisterDto);
+  @ResponseMessage('This API returns the new user that has just been created')
+  create(@Body() userRegisterDto: UserRegisterDto, @User() user: IUser) {
+    return this.usersService.create(userRegisterDto, user);
   }
 
   @Public()

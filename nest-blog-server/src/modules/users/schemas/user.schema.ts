@@ -12,9 +12,10 @@ export type UserDocument = HydratedDocument<User>;
 @Schema({ timestamps: true })
 @UseInterceptors(ClassSerializerInterceptor)
 export class User {
+  _id: string;
+
   @Prop({
     required: false,
-    unique: true,
     match: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
   })
   email?: string;
@@ -66,28 +67,28 @@ export class User {
   followedBy: string[];
 
   @Prop({
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,
     select: '_id username',
   })
-  createdBy: mongoose.Types.ObjectId;
+  createdBy: User;
 
   @Prop({
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,
     select: '_id username',
   })
-  updatedBy: mongoose.Types.ObjectId;
+  updatedBy: User;
 
   @Prop({
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,
     select: '_id username',
   })
-  deletedBy: mongoose.Types.ObjectId;
+  deletedBy: User;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

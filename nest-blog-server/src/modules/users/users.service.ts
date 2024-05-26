@@ -16,7 +16,7 @@ export class UsersService {
     @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
     @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
   ) {}
-  async create(userRegisterDto: UserRegisterDto) {
+  async create(userRegisterDto: UserRegisterDto, user: IUser) {
     let role = userRegisterDto.role;
     if (role) {
       const targetRole = await this.roleModel.findById(role);
@@ -29,7 +29,11 @@ export class UsersService {
       ).toObject();
       if (userRole) role = userRole._id.toString();
     }
-    const res = await this.userModel.create({ ...userRegisterDto, role });
+    const res = await this.userModel.create({
+      ...userRegisterDto,
+      role,
+      createdBy: user._id,
+    });
     const actualRole = (await this.roleModel.findById(role)).toObject();
     const result = {
       ...res,
@@ -38,7 +42,6 @@ export class UsersService {
         name: actualRole.name,
       },
     };
-    console.log(result);
     return result;
   }
 
@@ -139,7 +142,6 @@ export class UsersService {
 
   async hasUsernameExisted(username: string) {
     const user = await this.userModel.findOne({ username });
-    console.log(user);
     if (user !== null) {
       return user.username;
     }
