@@ -18,7 +18,7 @@ import {
   fetchRolesByName,
   updateRoleById,
 } from "../../../services/rolesApi";
-import PermissionEdit from "./PermissionEdit";
+import PermissionEdit from "../Permissions/PermissionEdit";
 import { useState } from "react";
 
 interface RoleFormProps {
@@ -110,6 +110,7 @@ const RoleForm: React.FC<RoleFormProps> = ({
                 validator: async (_, value: string) => {
                   if (value.length === 0)
                     throw new Error("Empty name is not allowed");
+                  if (value === initialValues?.name) return;
                   const res = await fetchRolesByName(value);
                   if (res && res.data.data && res.data.data?.meta.total > 0)
                     throw new Error(`${value} has already existed`);

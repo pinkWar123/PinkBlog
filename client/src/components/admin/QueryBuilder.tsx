@@ -56,7 +56,7 @@ const QueryBuilder: React.FC<QueryBuilderProps> = ({
     exactEntries.forEach((exactEntry) => {
       const key = exactEntry[0];
       const value = exactEntry[1];
-      result += `${key.split("exact-")[1]}=/${value}/&`;
+      if (value !== "") result += `${key.split("exact-")[1]}=/${value}/&`;
     });
 
     const sort = value["sort"];
@@ -81,8 +81,8 @@ const QueryBuilder: React.FC<QueryBuilderProps> = ({
     let initialiValues: Record<string, any> = {};
     if (exact) {
       exact?.forEach((item) => {
-        if (item.options) {
-          initialiValues[`exact-${item.name}`] = item.options[0].value;
+        if (item?.options) {
+          initialiValues[`exact-${item?.name}`] = item?.options[0]?.value;
         }
       });
     }

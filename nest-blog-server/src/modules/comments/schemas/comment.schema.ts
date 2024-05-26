@@ -45,6 +45,15 @@ export class Comment extends BaseEntity {
 
   @Prop({ default: 0 })
   likes: number;
+
+  @Prop({ default: null, type: Date })
+  createdAt: Date;
+
+  @Prop({ default: null, type: Date })
+  updatedAt: Date;
+
+  @Prop({ default: null, type: Date })
+  deletedAt: Date;
 }
 
 export const CommentSchema = SchemaFactory.createForClass(Comment);

@@ -18,7 +18,7 @@ import { createPost } from "../../services/postsApi";
 import { useNavigate } from "react-router-dom";
 import TextEditor from "../../components/shared/Editor";
 
-const toolbarOptions = [
+export const toolbarOptions = [
   ["bold", "italic", "underline", "strike"], // toggled buttons
   ["blockquote", "code-block"],
   ["link", "image", "video", "formula"],
@@ -58,7 +58,7 @@ const EditLayout: React.FC = () => {
       access
     );
     if (res && +res.status === 201) {
-      navigate("/profile");
+      navigate("/");
     }
   };
   return (
@@ -92,6 +92,7 @@ const EditLayout: React.FC = () => {
                     access={access}
                     setAccess={setAccess}
                     onSubmit={onSubmit}
+                    type="post"
                   />
                 </div>
               }

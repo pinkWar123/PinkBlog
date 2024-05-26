@@ -1,31 +1,45 @@
-import { Form, Input, Modal, Select, message } from "antd";
+import { Button, Flex, Form, Input, Modal, Select, message } from "antd";
 import ModalFooter from "../../../components/shared/ModalFooter";
 import { useState } from "react";
 import { CreatePermissionDto } from "../../../types/dtos";
-import { createNewPermission } from "../../../services/permissionsApi";
+import {
+  createNewPermission,
+  updatePermissionById,
+} from "../../../services/permissionsApi";
 import { handleErrorMessage } from "../../../utils/handleErrorMessage";
 import { MODULES } from "../../../constants/modules";
 import { METHODS } from "../../../constants/methods";
 
 interface PermissionFormProps {
   onHide: () => void;
+  initialValues?: any;
+  type?: "add" | "edit";
+  id: string;
 }
 
-const PermisisonForm: React.FC<PermissionFormProps> = ({ onHide }) => {
+const PermisisonForm: React.FC<PermissionFormProps> = ({
+  onHide,
+  initialValues,
+  type = "add",
+  id,
+}) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const handleCreatePermission = async (value: CreatePermissionDto) => {
-    const res = await createNewPermission(value);
-    if (res && res.status === 201) {
+  const onSubmit = async (value: any) => {
+    let res;
+    if (type === "add") res = await createNewPermission(value);
+    else res = await updatePermissionById(id, value);
+    if (res && (res.status === 201 || res.status === 200)) {
       message.success({ content: "Create permission successfully" });
     } else handleErrorMessage(res, message);
     onHide();
   };
+
   return (
     <>
       {contextHolder}
-      <Modal open footer={<></>}>
-        <Form onFinish={handleCreatePermission}>
+      <Modal open footer={<></>} title="Create new permission">
+        <Form onFinish={onSubmit} initialValues={initialValues}>
           <Form.Item
             label="Name of permission"
             key="name"
@@ -37,8 +51,22 @@ const PermisisonForm: React.FC<PermissionFormProps> = ({ onHide }) => {
           >
             <Input showCount max={50} />
           </Form.Item>
-          <Form.Item label="Api path" key="apiPath" name="apiPath" required>
-            <Input prefix="/api/v1/" />
+          <Form.Item
+            label="Api path"
+            key="apiPath"
+            name="apiPath"
+            required
+            rules={[
+              {
+                validator: (_, value: string) => {
+                  if (value.length > 0 && !value.startsWith("/"))
+                    return Promise.reject("Api must begin with a slash");
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <Input prefix="/api/v1" />
           </Form.Item>
           <Form.Item label="Module" key="module" name="module" required>
             <Select

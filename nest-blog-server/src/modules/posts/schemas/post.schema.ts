@@ -49,6 +49,15 @@ export class Post extends BaseEntity {
     },
   })
   status: string;
+
+  @Prop({ default: null, type: Date })
+  createdAt: Date;
+
+  @Prop({ default: null, type: Date })
+  updatedAt: Date;
+
+  @Prop({ default: null, type: Date })
+  deletedAt: Date;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

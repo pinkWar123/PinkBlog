@@ -50,6 +50,10 @@ import { DeleteDto } from './dto/delete.dto';
 export class UploadService {
   private readonly s3Client = new S3Client({
     region: this.configService.get<string>('AWS_S3_REGION'),
+    credentials: {
+      accessKeyId: this.configService.get('AWS_S3_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get('AWS_S3_SECRET_ACCESS_KEY'),
+    },
   });
 
   constructor(private readonly configService: ConfigService) {}

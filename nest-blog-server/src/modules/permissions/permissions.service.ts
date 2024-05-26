@@ -43,11 +43,11 @@ export class PermissionsService {
     try {
       const { population, projection, filter } = aqp(qs);
       const { sort }: { sort: any } = aqp(qs);
+      delete filter.pageSize;
+      delete filter.current;
       const totalItems = await this.permissionModel.count({ ...filter });
       const totalPages = Math.ceil(totalItems / pageSize);
       const calculatedSkip = (current - 1) * pageSize;
-      delete filter.pageSize;
-      delete filter.current;
 
       const permissions = await this.permissionModel
         .find({ ...filter })

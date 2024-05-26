@@ -43,3 +43,14 @@ export interface CreatePermissionDto {
   apiPath: string;
   method: "GET" | "POST" | "PATCH" | "DELETE";
 }
+
+export interface UpdatePermissionDto extends CreatePermissionDto {}
+
+export interface CreateSeriesDto {
+  title: string;
+  description: string;
+  posts?: string[];
+  tags?: string[];
+  status?: string;
+  access: string;
+}

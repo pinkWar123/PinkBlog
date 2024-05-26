@@ -164,7 +164,7 @@ const CommentItem: React.FC<{ comment: IComment }> = ({ comment }) => {
         }
       >
         <div style={{ display: "flex" }}>
-          <UserAvatar src={comment.createdBy?.profileImageUrl} size={40} />
+          <Avatar src={comment.createdBy?.profileImageUrl} size={40} />
           <div style={{ marginLeft: "12px" }}>
             <a
               href={`http://localhost:3000/profile/${comment?.createdBy?._id}`}

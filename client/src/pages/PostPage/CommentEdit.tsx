@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import UserStateContext from "../../context/users/UserContext";
 import UserAvatar from "../../components/shared/Avatar";
 import ReactQuill from "react-quill";
-import { Button, Result, Space } from "antd";
+import { Avatar, Button, Result, Space } from "antd";
 import { TOOLBAR_OPTIONS } from "./toolbarOption";
 import CommentStateContext from "../../context/comment/CommentContext";
 import styles from "./PostPage.module.scss";
@@ -48,11 +48,7 @@ const CommentEdit: React.FC<ICommentEditProps> = ({
           >
             <div style={{ display: "flex" }}>
               <div>
-                <UserAvatar
-                  src={user?.profileImageUrl}
-                  username={user?.username}
-                  size={40}
-                />
+                <Avatar src={user?.profileImageUrl} size={40} />
               </div>
               <div
                 style={{

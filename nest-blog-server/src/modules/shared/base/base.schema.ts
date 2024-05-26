@@ -4,36 +4,26 @@ import mongoose from 'mongoose';
 
 @Schema({ timestamps: true })
 export class BaseEntity {
-  @Prop({ default: null })
-  createdAt: Date;
-
-  @Prop({ default: null })
-  updatedAt: Date;
-
-  @Prop({ default: null })
-  deletedAt: Date;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: () => User.name,
+    default: null,
+    select: '_id email username profileImageUrl',
+  })
+  createdBy: string;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: () => User.name,
     default: null,
-    select: '_id username',
+    select: '_id email username profileImageUrl',
   })
-  createdBy: mongoose.Schema.Types.ObjectId;
+  updatedBy: string;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: () => User.name,
     default: null,
-    select: '_id username',
   })
-  updatedBy: mongoose.Schema.Types.ObjectId;
-
-  @Prop({
-    type: mongoose.Schema.Types.ObjectId,
-    ref: () => User.name,
-    default: null,
-    select: '_id username',
-  })
-  deletedBy: mongoose.Schema.Types.ObjectId;
+  deletedBy: string;
 }

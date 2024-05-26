@@ -13,6 +13,7 @@ export enum MODULES_ENUM {
   POSTS = 'POSTS',
   USERS = 'USERS',
   TAGS = 'TAGS',
+  SERIES = 'SERIES',
 }
 
 export const MODULES: string[] = [
@@ -23,4 +24,5 @@ export const MODULES: string[] = [
   'POSTS',
   'USERS',
   'TAGS',
+  'SERIES',
 ];

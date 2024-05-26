@@ -1,6 +1,6 @@
 import { Avatar, Card, Tag } from "antd";
 import styles from "./PostItem.module.scss";
-import { IPost } from "../../../types/backend";
+import { IPost, ITag } from "../../../types/backend";
 import { getFormatDate } from "../../../utils/formateDate";
 import { MouseEventHandler } from "react";
 const { Meta } = Card;
@@ -13,8 +13,9 @@ interface IProps {
     profileImageUrl?: string;
   };
   createdAt: Date;
-  tags: { _id: string; value: string }[];
+  tags: ITag[];
   onClick?: MouseEventHandler<HTMLDivElement> | undefined;
+  actions?: React.ReactElement[];
 }
 
 const PostItem: React.FC<IProps> = ({
@@ -22,11 +23,16 @@ const PostItem: React.FC<IProps> = ({
   createdBy,
   createdAt,
   tags,
+  actions,
   onClick,
 }) => {
   return (
     <div className={styles["post-item"]} onClick={onClick}>
-      <Card hoverable style={{ marginTop: "12px", width: "95%" }}>
+      <Card
+        hoverable
+        style={{ marginTop: "12px", width: "95%" }}
+        actions={actions}
+      >
         <Meta
           avatar={
             <Avatar
@@ -68,7 +74,10 @@ const PostItem: React.FC<IProps> = ({
                   {tags.length > 0 &&
                     tags.map((tag) => {
                       return (
-                        <Tag color="magenta" className={styles["post-tag"]}>
+                        <Tag
+                          color={tag?.color ? `#${tag.color}` : "magenta"}
+                          className={styles["post-tag"]}
+                        >
                           {tag.value}
                         </Tag>
                       );

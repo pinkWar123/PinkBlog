@@ -32,7 +32,7 @@ export class TagsService {
       createdBy: user._id,
     });
     let uploadImage = undefined;
-    if (res) {
+    if (res && file) {
       uploadImage = await this.uploadImageOfTag(res._id.toString(), file, user);
     }
     return {
@@ -67,6 +67,9 @@ export class TagsService {
     const { filter, population, projection } = aqp(qs);
     const { sort }: { sort: any } = aqp(qs);
 
+    delete filter.current;
+    delete filter.pageSize;
+
     const totalItems = await this.tagModel.countDocuments({ ...filter });
     const totalPages = Math.ceil(totalItems / pageSize);
     const calculatedSkip = (current - 1) * pageSize;
@@ -75,9 +78,6 @@ export class TagsService {
     //   console.log('filter:', filter.value.slice(1));
     //   // filter.value = new RegExp(filter.value.slice(1)); // Remove leading slash and create a RegExp object
     // }
-    delete filter.current;
-    delete filter.pageSize;
-    console.log(filter);
 
     const tags = await this.tagModel
       .find({ ...filter })
@@ -107,6 +107,7 @@ export class TagsService {
     file: Express.Multer.File,
     user: IUser,
   ) {
+    console.log(updateTagDto);
     const updateData: any = {
       ...updateTagDto,
       updatedBy: user._id.toString(),

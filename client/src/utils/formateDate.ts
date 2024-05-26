@@ -16,3 +16,20 @@ export const getFormatDate = (date: Date) => {
     .padStart(2, "0")}:${dateObject.getSeconds().toString().padStart(2, "0")}`;
   return formattedDate;
 };
+
+export const formatDateWith = (date: Date) => {
+  const _date = new Date(date); // Replace with your date
+
+  // Create an Intl.DateTimeFormat object with appropriate options
+  const options = {
+    dateStyle: "medium",
+    timeStyle: "short",
+    hourCycle: "h12",
+  };
+
+  const formatter = new Intl.DateTimeFormat("en-US");
+
+  // Format the date
+  const formattedDate = formatter.format(_date);
+  return formattedDate;
+};

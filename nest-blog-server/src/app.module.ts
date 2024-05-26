@@ -17,6 +17,7 @@ import { CommentsModule } from '@modules/comments/comments.module';
 import { PermissionsModule } from '@modules/permissions/permissions.module';
 import { RolesModule } from '@modules/roles/roles.module';
 import { SeedingModule } from '@modules/seeding/seeding.module';
+import { SeriesModule } from './series/series.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
@@ -44,6 +45,7 @@ import { SeedingModule } from '@modules/seeding/seeding.module';
     PermissionsModule,
     RolesModule,
     SeedingModule,
+    SeriesModule,
   ],
   controllers: [AppController],
   providers: [

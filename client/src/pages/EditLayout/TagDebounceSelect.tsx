@@ -30,12 +30,11 @@ const TagDebounceSelect: React.FC<IProps> = ({ tags, setTags }: IProps) => {
       id="tagInput"
       mode="multiple"
       value={tags}
-      placeholder="Select users"
+      placeholder="Select tags"
       fetchOptions={fetchTagList}
       onChange={(newValue) => {
         setTags(newValue as TagValue[]);
       }}
-      // onSearch={handleInputChange} // Handle input change
       style={{ width: "100%" }}
     />
   );

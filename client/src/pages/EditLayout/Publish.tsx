@@ -11,17 +11,20 @@ interface IProps {
   access: string;
   setAccess: (value: "public" | "private") => void;
   onSubmit: () => void;
+  type: "post" | "series";
 }
 
 interface PublishProps {
   onSubmit: () => void;
+  type: "post" | "series";
 }
 
-const Public: React.FC<PublishProps> = ({ onSubmit }) => {
+const Public: React.FC<PublishProps> = ({ onSubmit, type }) => {
   return (
     <>
       <div>
-        <GlobalOutlined /> Mọi người có thể nhìn thấy bài viết của bạn
+        <GlobalOutlined /> Mọi người có thể nhìn thấy{" "}
+        {type === "post" ? "bài viết" : "series"} của bạn
       </div>
       <Button style={buttonStyle} onClick={onSubmit}>
         Xuất bản
@@ -30,12 +33,13 @@ const Public: React.FC<PublishProps> = ({ onSubmit }) => {
   );
 };
 
-const OnlyMe: React.FC<PublishProps> = ({ onSubmit }) => {
+const OnlyMe: React.FC<PublishProps> = ({ onSubmit, type }) => {
   return (
     <>
       <div>
-        <LockOutlined /> Chỉ có bạn mới có thể xem bài viết này. Bản nháp của
-        bạn đã được lưu tự động khi bạn nhập
+        <LockOutlined /> Chỉ có bạn mới có thể xem{" "}
+        {type === "post" ? "bài viết" : "series"} này. Bản nháp của bạn đã được
+        lưu tự động khi bạn nhập
       </div>
       <Button style={buttonStyle} onClick={onSubmit}>
         Lưu
@@ -44,18 +48,23 @@ const OnlyMe: React.FC<PublishProps> = ({ onSubmit }) => {
   );
 };
 
-const Publish: React.FC<IProps> = ({ access, setAccess, onSubmit }) => {
+const Publish: React.FC<IProps> = ({
+  access,
+  setAccess,
+  onSubmit,
+  type = "post",
+}) => {
   const renderPublishOption = () => {
     switch (access) {
       case "public":
-        return <Public onSubmit={onSubmit} />;
+        return <Public onSubmit={onSubmit} type={type} />;
       case "private":
-        return <OnlyMe onSubmit={onSubmit} />;
+        return <OnlyMe onSubmit={onSubmit} type={type} />;
     }
   };
   return (
     <div style={{ width: "350px" }}>
-      Xuất bản bài viết của bạn
+      Xuất bản {type === "post" ? "bài viết" : "series"} của bạn
       <br />
       <strong>Giấy phép: </strong>
       All rights reserved

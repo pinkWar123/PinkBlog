@@ -73,7 +73,7 @@ export class PostsService {
       .populate([
         {
           path: 'createdBy',
-          select: '_id username',
+          select: '_id username profileImageUrl',
         },
       ])
       .populate('tags')
@@ -94,7 +94,7 @@ export class PostsService {
       if (res) {
         const post = (await res.populate('tags', '_id value')).populate(
           'createdBy',
-          '_id username profileImageUrl',
+          '_id username profileImageUrl email',
         );
         return post;
       }

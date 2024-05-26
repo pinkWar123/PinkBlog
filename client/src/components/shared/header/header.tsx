@@ -65,6 +65,7 @@ const MainHeader: React.FC = () => {
     {
       icon: <UnorderedListOutlined />,
       label: "Series mới",
+      onClick: () => navigate(`/series/create`),
     },
   ];
   const avatarPopoverProps: avatarPopoverProp[] = [
