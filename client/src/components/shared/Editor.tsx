@@ -44,7 +44,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
           range &&
             quill
               .getEditor()
-              .insertEmbed(range.index, "image", res?.data.data?.fileName);
+              .insertEmbed(range.index, "image", res?.data.data?.url);
         }
       }
     };

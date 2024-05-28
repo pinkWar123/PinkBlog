@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { UserLoginDto, UserRegisterDto } from "../types/auth";
 import axiosInstance from "./config";
-import { IBackendRes, IUser } from "../types/backend";
+import { IBackendRes, IUpdateResponse, IUser } from "../types/backend";
 
 const login = async (userLoginDto: UserLoginDto) => {
   try {
@@ -44,5 +44,9 @@ const getUserInfo = async () => {
   }
 };
 
+const logout = async () => {
+  return await axiosInstance.post<IBackendRes<IUpdateResponse>>("/auth/logout");
+};
+
 export default login;
-export { checkUserAccount, register, getUserInfo };
+export { checkUserAccount, register, getUserInfo, logout };

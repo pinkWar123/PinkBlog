@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IPost, ISeries } from "../../types/backend";
 import {
@@ -33,9 +33,11 @@ import SeriesDebounceSelect, { PostValue } from "./SeriesDebounceSelect";
 import ModalFooter from "../../components/shared/ModalFooter";
 import AddPostModal from "./AddPostModal";
 import { handleErrorMessage } from "../../utils/handleErrorMessage";
+import UserStateContext from "../../context/users/UserContext";
 
 const Series: React.FC = () => {
   const { id } = useParams();
+  const { user } = useContext(UserStateContext);
   const navigate = useNavigate();
   const [series, setSeries] = useState<ISeries | undefined>();
   const [messageApi, contextHolder] = message.useMessage();
@@ -128,15 +130,19 @@ const Series: React.FC = () => {
                 createdBy={post.createdBy}
                 tags={post.tags}
                 onClick={() => navigate(`/posts/${post._id}`)}
-                actions={[
-                  <DeleteOutlined
-                    key="delete"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      await handleRemoveSeries(post._id);
-                    }}
-                  />,
-                ]}
+                actions={
+                  user?._id === post.createdBy._id
+                    ? [
+                        <DeleteOutlined
+                          key="delete"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleRemoveSeries(post._id);
+                          }}
+                        />,
+                      ]
+                    : []
+                }
               />
             </>
           ))}

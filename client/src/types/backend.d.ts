@@ -32,9 +32,11 @@ export interface IUser {
   _id: string;
   username: string;
   description?: string;
+  email?: string;
   sub?: string;
   iat?: string;
   profileImageUrl?: string;
+  profileImageKey?: string;
   isFollowed?: boolean;
   numOfFollowers: number;
   reputation: number;
@@ -68,6 +70,7 @@ export interface IPost {
   content?: string;
   likes: number;
   tags: ITag[];
+  value?: string;
   createdBy: {
     username: string;
     _id: string;
@@ -76,6 +79,7 @@ export interface IPost {
   createdAt: Date;
   updatedAt: Date;
   status: "PENDING" | "APPROVED" | "REJECTED";
+  access: "private" | "public";
 }
 
 export interface IComment {
@@ -114,6 +118,7 @@ export interface IFollower {
   numOfFollowers: number;
   reputation: number;
   profileImageUrl: string;
+  isFollowed?: boolean;
 }
 
 export interface IPermission {

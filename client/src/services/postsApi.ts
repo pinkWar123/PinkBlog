@@ -131,6 +131,12 @@ const downvote = async (_id: string) => {
   }
 };
 
+const removePostById = async (id: string) => {
+  return await axiosInstance.delete<IBackendRes<IUpdateResponse>>(
+    `/posts/${id}`
+  );
+};
+
 export {
   createPost,
   fetchPublicPosts,
@@ -141,4 +147,5 @@ export {
   fetchPosts,
   upvote,
   downvote,
+  removePostById,
 };

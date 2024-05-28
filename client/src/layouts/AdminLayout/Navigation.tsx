@@ -91,10 +91,10 @@ const Navigation: React.FC = () => {
   const items: MenuItem[] = useMemo(
     () => [
       {
-        key: "users",
+        key: "admin",
         label: "Users",
         icon: <UserOutlined />,
-        onClick: () => navigate("/admin/users"),
+        onClick: () => navigate("/admin"),
       },
       {
         key: "tags",

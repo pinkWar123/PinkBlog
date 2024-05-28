@@ -1,11 +1,21 @@
-import { useCallback, useEffect, useState } from "react";
-import { IFollower } from "../../types/backend";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { IFollower, IUser } from "../../types/backend";
 import PaginationHandler from "../../components/shared/PaginationHandler";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { fetchFollowersOfUserById } from "../../services/usersApi";
+import {
+  fetchFollowersOfUserById,
+  getUserById,
+  handleFollowUserById,
+} from "../../services/usersApi";
 import { Avatar, Button, Col, Empty, Flex, Row, Tooltip } from "antd";
-import { EditFilled, StarFilled, UserAddOutlined } from "@ant-design/icons";
+import {
+  EditFilled,
+  StarFilled,
+  UserAddOutlined,
+  UserDeleteOutlined,
+} from "@ant-design/icons";
 import styles from "./ProfilePage.module.scss";
+import UserStateContext from "../../context/users/UserContext";
 const followerStatItems = [
   {
     icon: <StarFilled />,
@@ -21,18 +31,26 @@ const followerStatItems = [
   },
 ];
 //<UserDeleteOutlined />
-const FollowerItem: React.FC<{ follower: IFollower; onClick: () => void }> = ({
-  follower,
-  onClick,
-}) => {
+const FollowerItem: React.FC<{
+  follower: IFollower;
+  onClick: () => void;
+  user: IUser | undefined;
+  refetchUser: () => Promise<void>;
+}> = ({ follower, onClick, user, refetchUser }) => {
+  const [isFollowed, setFollow] = useState<boolean>(user?.isFollowed ?? false);
+  useEffect(() => {
+    if (follower?.isFollowed) setFollow(follower.isFollowed);
+  }, [follower]);
   return (
     <Flex style={{ padding: "20px 0" }}>
-      <Avatar
-        size={64}
-        src={follower.profileImageUrl}
-        style={{ cursor: "pointer" }}
-        onClick={onClick}
-      />
+      <div>
+        <Avatar
+          size={48}
+          src={follower.profileImageUrl}
+          style={{ cursor: "pointer" }}
+          onClick={onClick}
+        />
+      </div>
       <div style={{ marginLeft: "8px" }}>
         <div className={styles["follower-username"]} onClick={onClick}>
           {follower.username}
@@ -58,9 +76,19 @@ const FollowerItem: React.FC<{ follower: IFollower; onClick: () => void }> = ({
         <Button
           style={{ marginTop: "8px" }}
           type="primary"
-          icon={<UserAddOutlined />}
+          icon={isFollowed ? <UserDeleteOutlined /> : <UserAddOutlined />}
+          disabled={user === undefined || follower._id === user?._id}
+          onClick={async () => {
+            if (user?._id) {
+              const res = await handleFollowUserById(follower._id, user._id);
+              if (res?.status === 201) {
+                await refetchUser();
+                setFollow((prev) => !prev);
+              }
+            }
+          }}
         >
-          Follow
+          {isFollowed ? "Hủy theo dõi" : "Theo dõi"}
         </Button>
       </div>
     </Flex>
@@ -72,15 +100,19 @@ const Followers: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [followers, setFollowers] = useState<IFollower[] | undefined>();
+  const { user } = useContext(UserStateContext);
 
   const fetchFollowers = useCallback(
     async (page: number) => {
       if (!id) return;
-      const res = await fetchFollowersOfUserById(id, page, 5);
-      setFollowers(res?.data.data?.result ?? []);
+      const res = await fetchFollowersOfUserById(id, page, 5, user?._id);
+      setFollowers((prev) => {
+        if (res?.data?.data?.result) return [...res?.data.data?.result];
+        else return [];
+      });
       return res?.data.data?.meta;
     },
-    [id]
+    [id, user]
   );
 
   useEffect(() => {
@@ -89,7 +121,7 @@ const Followers: React.FC = () => {
     const page = pageString ? parseInt(pageString, 10) : 1;
     console.log(page);
     fetchFollowers(page);
-  }, [location.search, fetchFollowers]);
+  }, [location.search, fetchFollowers, user]);
 
   return (
     <div>
@@ -111,6 +143,21 @@ const Followers: React.FC = () => {
                     <FollowerItem
                       follower={follower}
                       onClick={() => navigate(`/profile/${follower._id}`)}
+                      user={user}
+                      key={follower._id}
+                      refetchUser={async () => {
+                        const res = await getUserById(follower._id, user?._id);
+                        if (res?.status === 200) {
+                          setFollowers((prev) => {
+                            if (!prev) return prev;
+                            return prev.map((follower, _index) =>
+                              _index === index
+                                ? (res.data.data as IFollower)
+                                : follower
+                            );
+                          });
+                        }
+                      }}
                     />
                   </Col>
                 );
