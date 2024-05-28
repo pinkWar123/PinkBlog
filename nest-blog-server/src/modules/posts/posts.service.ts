@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto, VoteDto } from './dto/update-post.dto';
 import { IUser } from 'src/types/user.type';
@@ -6,11 +10,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocument } from './schemas/post.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import aqp from 'api-query-params';
+import { Series, SeriesDocument } from 'src/series/schemas/series.schema';
+import mongoose from 'mongoose';
+import { User, UserDocument } from '@modules/users/schemas/user.schema';
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectModel(Post.name) private postModel: SoftDeleteModel<PostDocument>,
+    @InjectModel(Series.name)
+    private seriesModel: SoftDeleteModel<SeriesDocument>,
+    @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
   ) {}
   async create(createPostDto: CreatePostDto, user: IUser) {
     try {
@@ -105,11 +115,53 @@ export class PostsService {
   }
 
   async updatePostById(id: string, updatePostDto: UpdatePostDto, user: IUser) {
+    if (!id || !updatePostDto) throw new BadRequestException();
+    const postToUpdate = await this.postModel.findById(id);
+    const createdBy =
+      postToUpdate?.createdBy as unknown as mongoose.Types.ObjectId;
+    if (!createdBy.equals(user._id) || user?.role?.name === 'ADMIN')
+      throw new ForbiddenException('Only author or admin can modify a post');
     const res = await this.postModel.updateOne(
       { _id: id },
       { ...updatePostDto, updatedBy: user._id },
     );
+
+    const tags = updatePostDto?.tags;
+    if (tags?.length > 0) {
+      await this.updateTagsOnPostChange(id, user);
+    }
+
     return res;
+  }
+
+  async updateTagsOnPostChange(postId: string, user: IUser) {
+    const seriesToUpdate = await this.seriesModel
+      .find({
+        posts: new mongoose.Types.ObjectId(postId),
+      })
+      .populate('posts');
+    if (seriesToUpdate?.length > 0) {
+      const promises = seriesToUpdate.map(async (series) => {
+        const _series = series as unknown as { _id: mongoose.Types.ObjectId };
+        const posts = series.posts;
+        const tagSet = new Set<string>();
+        posts?.forEach((post) => {
+          const tags = post.tags;
+          tags?.forEach((tag) => {
+            const _tag = tag as unknown as { _id: mongoose.Types.ObjectId };
+            tagSet.add(_tag?._id?.toString());
+          });
+        });
+        await this.seriesModel.updateOne(
+          { _id: _series._id.toString() },
+          {
+            tags: Array.from(tagSet),
+            updateBy: user._id,
+          },
+        );
+      });
+      await Promise.all(promises);
+    }
   }
 
   async upvote(user: IUser, voteDto: VoteDto) {
@@ -170,7 +222,65 @@ export class PostsService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async removePostById(id: string, user: IUser) {
+    const postToRemove = await this.postModel.findById(id);
+    if (
+      postToRemove.createdBy.toString() !== user._id ||
+      user?.role?.name !== 'ADMIN'
+    ) {
+      throw new ForbiddenException('Only admin or author can delete this post');
+    }
+
+    await Promise.all([
+      async () => {
+        await this.postModel.updateOne(
+          { _id: id },
+          {
+            deletedBy: user._id,
+          },
+        );
+      },
+      async () => {
+        if (postToRemove?._id)
+          await this.userModel.updateOne(
+            { _id: postToRemove._id.toString() },
+            {
+              $inc: { numOfPosts: -1 },
+            },
+          );
+      },
+    ]);
+    const res = await this.postModel.softDelete({ _id: id });
+    const seriesToUpdate = await this.seriesModel
+      .find({
+        posts: new mongoose.Types.ObjectId(id),
+      })
+      .populate('posts');
+    if (seriesToUpdate?.length > 0) {
+      const promises = seriesToUpdate.map(async (series) => {
+        const _series = series as unknown as { _id: mongoose.Types.ObjectId };
+        const posts = series?.posts?.filter((post) => {
+          const _post = post as unknown as { _id: mongoose.Types.ObjectId };
+          return !_post._id.equals(id);
+        });
+        const tagSet = new Set<string>();
+        posts?.forEach((post) => {
+          const tags = post.tags;
+          tags?.forEach((tag) => {
+            const _tag = tag as unknown as { _id: mongoose.Types.ObjectId };
+            tagSet.add(_tag?._id?.toString());
+          });
+        });
+        await this.seriesModel.updateOne(
+          { _id: _series._id.toString() },
+          {
+            tags: Array.from(tagSet),
+            updateBy: user._id,
+          },
+        );
+      });
+      await Promise.all(promises);
+    }
+    return res;
   }
 }

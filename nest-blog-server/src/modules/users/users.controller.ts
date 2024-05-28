@@ -10,6 +10,7 @@ import {
   ClassSerializerInterceptor,
   Query,
   ParseIntPipe,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserRegisterDto } from './dto/create-user.dto';
@@ -19,6 +20,7 @@ import { Public } from 'src/decorators/public';
 import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -27,9 +29,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ResponseMessage('This API returns the new user that has just been created')
-  create(@Body() userRegisterDto: UserRegisterDto, @User() user: IUser) {
-    return this.usersService.create(userRegisterDto, user);
+  create(
+    @Body() userRegisterDto: UserRegisterDto,
+    @UploadedFile() file: Express.Multer.File,
+    @User() user: IUser,
+  ) {
+    return this.usersService.create(userRegisterDto, file, user);
   }
 
   @Public()
@@ -57,8 +64,14 @@ export class UsersController {
     @Param('id') id: string,
     @Query('current') current: string,
     @Query('pageSize') pageSize: string,
+    @Query('visitorId') visitorId?: string,
   ) {
-    return this.usersService.findFollowersOfUserById(id, +current, +pageSize);
+    return this.usersService.findFollowersOfUserById(
+      id,
+      +current,
+      +pageSize,
+      visitorId,
+    );
   }
 
   @Post('/follow/:id')
@@ -66,18 +79,21 @@ export class UsersController {
   followUserById(
     @Param('id') targetId: string,
     @Body() followDto: { _id: string },
+    @User() user: IUser,
   ) {
     return this.usersService.handleFollowUserById(targetId, followDto);
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
   @ResponseMessage('This API returns the result of updating a user by id')
   updateUserById(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
     @User() user: IUser,
   ) {
-    return this.usersService.updateUserById(id, updateUserDto, user);
+    return this.usersService.updateUserById(id, updateUserDto, file, user);
   }
 
   @Delete(':id')

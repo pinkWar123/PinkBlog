@@ -7,6 +7,7 @@ import { PostSchema } from '@modules/posts/schemas/post.schema';
 import { AuthService } from '@modules/auth/auth.service';
 import { AuthModule } from '@modules/auth/auth.module';
 import { Role, RoleSchema } from '@modules/roles/schemas/role.schema';
+import { UploadModule } from '@modules/upload/upload.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { Role, RoleSchema } from '@modules/roles/schemas/role.schema';
         schema: RoleSchema,
       },
     ]),
+    UploadModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

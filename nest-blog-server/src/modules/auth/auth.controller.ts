@@ -72,4 +72,10 @@ export class AuthController {
   checkUserAccount(@Param('username') username: string) {
     return this.usersService.hasUsernameExisted(username);
   }
+
+  @Post('logout')
+  @ResponseMessage('This API returns OK if user logout successfully')
+  logout(@User() user: IUser, @Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(user, res);
+  }
 }

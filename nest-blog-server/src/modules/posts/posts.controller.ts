@@ -35,9 +35,7 @@ export class PostsController {
     @Query('pageSize') result: string,
     @Query('current') current: number,
     @Query() qs: string,
-    @User() user: IUser,
   ) {
-    console.log(user);
     return this.postsService.findAll(+result, +current, qs);
   }
 
@@ -71,7 +69,8 @@ export class PostsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+  @ResponseMessage('This API returns the result of deleting a post by id')
+  removePostById(@Param('id') id: string, @User() user: IUser) {
+    return this.postsService.removePostById(id, user);
   }
 }

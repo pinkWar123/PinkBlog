@@ -10,13 +10,20 @@ import mongoose from 'mongoose';
 import aqp from 'api-query-params';
 import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { plainToInstance } from 'class-transformer';
+import { UploadService } from '@modules/upload/upload-file.service';
+import { PublicFile } from '@modules/shared/upload/public-file';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
     @InjectModel(Role.name) private roleModel: SoftDeleteModel<RoleDocument>,
+    private uploadService: UploadService,
   ) {}
-  async create(userRegisterDto: UserRegisterDto, user: IUser) {
+  async create(
+    userRegisterDto: UserRegisterDto,
+    file: Express.Multer.File,
+    user: IUser,
+  ) {
     let role = userRegisterDto.role;
     if (role) {
       const targetRole = await this.roleModel.findById(role);
@@ -29,10 +36,19 @@ export class UsersService {
       ).toObject();
       if (userRole) role = userRole._id.toString();
     }
+    const image: PublicFile = { key: '', url: '' };
+    if (file) {
+      const res = await this.uploadService.upload('profile', file);
+      image.key = res?.key;
+      image.url = res?.url;
+    }
+
     const res = await this.userModel.create({
       ...userRegisterDto,
       role,
       createdBy: user._id,
+      profileImageKey: image?.key,
+      profileImageUrl: image?.url,
     });
     const actualRole = (await this.roleModel.findById(role)).toObject();
     const result = {
@@ -41,6 +57,8 @@ export class UsersService {
         _id: actualRole._id.toString(),
         name: actualRole.name,
       },
+      profileImageKey: image?.key,
+      profileImageUrl: image?.url,
     };
     return result;
   }
@@ -90,14 +108,29 @@ export class UsersService {
     }
   }
 
-  async updateUserById(id: string, updateUserDto: UpdateUserDto, user: IUser) {
-    const res = await this.userModel.updateOne(
-      { _id: id },
-      {
-        ...updateUserDto,
-        updatedBy: user._id,
-      },
-    );
+  async updateUserById(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    file: Express.Multer.File,
+    user: IUser,
+  ) {
+    const uploadObj = {
+      ...updateUserDto,
+      updatedBy: user._id,
+    };
+    if (file) {
+      const res = await this.uploadService.upload('profile', file);
+      if (res) {
+        uploadObj.profileImageKey = res.key;
+        uploadObj.profileImageUrl = res.url;
+      }
+      const userToUpdate = await this.userModel.findById(id);
+      if (userToUpdate.profileImageKey) {
+        await this.uploadService.remove({ key: userToUpdate.profileImageKey });
+      }
+    }
+
+    const res = await this.userModel.updateOne({ _id: id }, uploadObj);
     return res;
   }
 
@@ -198,7 +231,6 @@ export class UsersService {
       const hasFollowedUser = targetUser.followedBy.some(
         (item) => item == followDto._id,
       );
-      console.log(hasFollowedUser);
       if (hasFollowedUser) {
         await this.userModel.updateOne(
           { _id: targetId },
@@ -225,7 +257,12 @@ export class UsersService {
     }
   }
 
-  async findFollowersOfUserById(id: string, current: number, pageSize: number) {
+  async findFollowersOfUserById(
+    id: string,
+    current: number,
+    pageSize: number,
+    visitorId?: string,
+  ) {
     if (current < 0 || pageSize < 0)
       throw new BadRequestException('Invalid current or pageSize');
     try {
@@ -248,6 +285,9 @@ export class UsersService {
           const promises = idsList.map(async (followedId) => {
             const follower = await this.userModel.findById(followedId);
             if (user) {
+              const hasFollowedUser = follower?.followedBy?.some(
+                (item) => item === visitorId,
+              );
               followers.push({
                 _id: followedId,
                 username: follower.username,
@@ -255,6 +295,7 @@ export class UsersService {
                 numOfFollowers: follower.followedBy.length,
                 reputation: follower.reputation ?? 0,
                 profileImageUrl: follower.profileImageUrl,
+                isFollowed: hasFollowedUser,
               });
             }
           });

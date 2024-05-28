@@ -9,6 +9,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SeedingController } from './seeding.controller';
 import { SeedingService } from './seeding.service';
 import { UsersService } from '@modules/users/users.service';
+import { UploadModule } from '@modules/upload/upload.module';
+import { UsersModule } from '@modules/users/users.module';
 
 @Module({
   imports: [
@@ -17,8 +19,9 @@ import { UsersService } from '@modules/users/users.service';
       { name: Permission.name, schema: PermissionSchema },
       { name: Role.name, schema: RoleSchema },
     ]),
+    UsersModule,
   ],
   controllers: [SeedingController],
-  providers: [SeedingService, UsersService],
+  providers: [SeedingService],
 })
 export class SeedingModule {}
