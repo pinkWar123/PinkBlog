@@ -80,13 +80,13 @@ const ProfileUpload: React.FC<DoubleProps> = ({ onNext, onPrev }) => {
     try {
       const res = await uploadSingleFile(file, "profile", config);
       onSuccess("Ok");
-      const fileName: string | undefined = res?.data?.data?.fileName;
-      console.log(fileName);
+
       setRegisterInfo((user: UserRegisterDto | undefined) => {
         if (!user) return user;
         return {
           ...user,
-          profileImageUrl: fileName,
+          profileImageUrl: res?.data?.data?.url,
+          profileImageKey: res?.data?.data?.key,
         };
       });
     } catch (error) {

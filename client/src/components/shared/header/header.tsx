@@ -1,4 +1,5 @@
 import {
+  ControlOutlined,
   EditFilled,
   EditOutlined,
   FileOutlined as FileOutlinedAntd,
@@ -15,6 +16,7 @@ import React, { useContext, useEffect, useState } from "react";
 import styles from "./header.module.scss";
 import UserStateContext from "../../../context/users/UserContext";
 import { useNavigate } from "react-router-dom";
+import { logout } from "../../../services/authApi";
 
 type avatarPopoverProp = {
   icon: React.ReactElement;
@@ -54,13 +56,13 @@ const AvatarPopoverContent: React.FC<{ props: avatarPopoverProp[] }> = ({
 };
 
 const MainHeader: React.FC = () => {
-  const { user } = useContext(UserStateContext);
+  const { user, setUser } = useContext(UserStateContext);
   const navigate = useNavigate();
   const writingPopoverProps: avatarPopoverProp[] = [
     {
       icon: <EditFilled />,
       label: "Viết bài",
-      onClick: () => navigate(`/edit`),
+      onClick: () => navigate(`/posts/create`),
     },
     {
       icon: <UnorderedListOutlined />,
@@ -85,8 +87,22 @@ const MainHeader: React.FC = () => {
     {
       icon: <LogoutOutlined />,
       label: "Đăng xuất",
+      onClick: async () => {
+        const res = await logout();
+        if (res && res.status === 201) {
+          localStorage.removeItem("access_token");
+          setUser(undefined);
+          navigate("/");
+        }
+      },
     },
   ];
+  if (user?.role?.name === "ADMIN")
+    avatarPopoverProps.push({
+      icon: <ControlOutlined />,
+      label: "Trang quản trị",
+      onClick: () => navigate("/admin"),
+    });
   return (
     <Header
       style={{
@@ -102,7 +118,15 @@ const MainHeader: React.FC = () => {
       }}
     >
       <Space size={"large"}>
-        <div style={{ color: "red", paddingRight: "32px", flexShrink: "0" }}>
+        <div
+          style={{
+            color: "red",
+            paddingRight: "32px",
+            flexShrink: "0",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/")}
+        >
           Blogger
         </div>
         <div>Bài viết 1</div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IPost, ISeries } from "../../types/backend";
 import {
@@ -33,9 +33,11 @@ import SeriesDebounceSelect, { PostValue } from "./SeriesDebounceSelect";
 import ModalFooter from "../../components/shared/ModalFooter";
 import AddPostModal from "./AddPostModal";
 import { handleErrorMessage } from "../../utils/handleErrorMessage";
+import UserStateContext from "../../context/users/UserContext";
 
 const Series: React.FC = () => {
   const { id } = useParams();
+  const { user } = useContext(UserStateContext);
   const navigate = useNavigate();
   const [series, setSeries] = useState<ISeries | undefined>();
   const [messageApi, contextHolder] = message.useMessage();
@@ -105,20 +107,22 @@ const Series: React.FC = () => {
               Nội dung
             </Col>
             <Col
-              span={16}
+              span={user?._id === series?.createdBy?._id ? 16 : 22}
               style={{
                 border: "1px solid #eee",
                 height: "1px",
                 marginTop: "12px",
               }}
             ></Col>
-            <Col
-              span={6}
-              style={{ cursor: "pointer" }}
-              onClick={() => setShowAddPostModal(true)}
-            >
-              <PlusOutlined /> Thêm bài viết vào series
-            </Col>
+            {user?._id === series?.createdBy?._id && (
+              <Col
+                span={6}
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowAddPostModal(true)}
+              >
+                <PlusOutlined /> Thêm bài viết vào series
+              </Col>
+            )}
           </Row>
           {series?.posts?.map((post) => (
             <>
@@ -128,15 +132,19 @@ const Series: React.FC = () => {
                 createdBy={post.createdBy}
                 tags={post.tags}
                 onClick={() => navigate(`/posts/${post._id}`)}
-                actions={[
-                  <DeleteOutlined
-                    key="delete"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      await handleRemoveSeries(post._id);
-                    }}
-                  />,
-                ]}
+                actions={
+                  user?._id === post.createdBy._id
+                    ? [
+                        <DeleteOutlined
+                          key="delete"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleRemoveSeries(post._id);
+                          }}
+                        />,
+                      ]
+                    : []
+                }
               />
             </>
           ))}

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsMongoId,
@@ -78,11 +79,14 @@ export class UserRegisterDto {
   description?: string;
 
   @ApiProperty({
-    example: 18,
+    example: '18',
     description: "Enter user's age",
   })
-  @IsNumber({}, { message: 'Age must be a number' })
-  @Min(1, { message: 'Please enter a positive number' })
+  @IsOptional()
+  // @IsString({})
+  // @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
+  // @IsNumber()
+  // @Min(1, { message: 'Please enter a positive number' })
   age: number;
 
   @IsOptional()
@@ -92,6 +96,14 @@ export class UserRegisterDto {
       "This is the profile image url. User's profile image can be retrieved in profile folder",
   })
   profileImageUrl?: string;
+
+  @IsOptional()
+  @IsString({ message: 'Profile image key must be a string' })
+  @ApiProperty({
+    description:
+      'This is the profile image key. This is used to remove the image',
+  })
+  profileImageKey?: string;
 
   @IsMongoId()
   @IsOptional()

@@ -9,6 +9,7 @@ axiosInstance.defaults.headers.common[
   "Authorization"
 ] = `Bearer ${localStorage.getItem("access_token")}`;
 axiosInstance.defaults.headers.post["Content-Type"] = "application/json";
+axios.defaults.withCredentials = true;
 
 axiosInstance.interceptors.request.use(
   (request) => {

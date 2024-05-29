@@ -44,7 +44,13 @@ const Post: React.FC<{ post: IPost | undefined }> = ({ post }) => {
         <div style={{ display: "flex" }}>
           <Avatar src={post?.createdBy?.profileImageUrl} size={40} />
           <div style={{ marginLeft: "24px" }}>
-            <a>{post?.createdBy?.username}</a>
+            <a
+              href={`http://localhost:3000/profile/${post?.createdBy?._id}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {post?.createdBy?.username}
+            </a>
             <div style={{ display: "flex", marginTop: "8px" }}>
               <div style={{ paddingRight: "12px" }}>
                 <StarOutlined /> 42

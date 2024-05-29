@@ -67,6 +67,17 @@ export class User {
   followedBy: string[];
 
   @Prop({
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User.name,
+        default: null,
+      },
+    ],
+  })
+  following: User[];
+
+  @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: User.name,
     default: null,

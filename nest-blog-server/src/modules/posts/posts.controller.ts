@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -28,6 +29,17 @@ export class PostsController {
     return this.postsService.create(createPostDto, user);
   }
 
+  @Get('following')
+  @ResponseMessage(
+    'This API returns a list of posts written by users that are followed by a user',
+  )
+  findFollowingPosts(
+    @Query('current', ParseIntPipe) current: number,
+    @Query('pageSize', ParseIntPipe) pageSize: number,
+    @User() user: IUser,
+  ) {
+    return this.postsService.findFollowingPosts(current, pageSize, user);
+  }
   @Public()
   @Get()
   @ResponseMessage('This API returns a list of posts')
@@ -35,9 +47,7 @@ export class PostsController {
     @Query('pageSize') result: string,
     @Query('current') current: number,
     @Query() qs: string,
-    @User() user: IUser,
   ) {
-    console.log(user);
     return this.postsService.findAll(+result, +current, qs);
   }
 
@@ -71,7 +81,8 @@ export class PostsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+  @ResponseMessage('This API returns the result of deleting a post by id')
+  removePostById(@Param('id') id: string, @User() user: IUser) {
+    return this.postsService.removePostById(id, user);
   }
 }

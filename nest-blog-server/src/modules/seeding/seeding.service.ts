@@ -77,7 +77,6 @@ export class SeedingService implements OnModuleInit {
     const countRoles = await this.roleModel.count({});
     if (countRoles === 0) {
       const permissions = await this.permissionModel.find({});
-      console.log('init roles');
       await Promise.all([
         (async () => {
           const adminRole = await this.roleModel.create({

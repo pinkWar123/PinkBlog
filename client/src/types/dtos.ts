@@ -26,8 +26,15 @@ export interface CreateRoleDto {
 
 export interface UpdateRoleDto extends CreateRoleDto {}
 
-export interface UpdatePostDto {
-  status: "PENDING" | "REJECTED" | "APPROVED";
+export interface CreatePostDto {
+  title?: string;
+  content?: string;
+  tags?: string[];
+  access?: "public" | "private";
+}
+
+export interface UpdatePostDto extends CreatePostDto {
+  status?: "PENDING" | "REJECTED" | "APPROVED";
 }
 
 export interface CreatePermissionDto {

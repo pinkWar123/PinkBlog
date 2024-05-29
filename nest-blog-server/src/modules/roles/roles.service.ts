@@ -89,7 +89,6 @@ export class RolesService {
 
   async findRoleById(id: string) {
     const res = await this.roleModel.findById(id).populate('permissions');
-    console.log(res);
     return res;
   }
 

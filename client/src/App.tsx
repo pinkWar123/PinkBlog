@@ -73,7 +73,8 @@ export default function App() {
               <Route path="register" element={<Register />} />
             </Route>
 
-            <Route path="edit" element={<EditLayout />} />
+            <Route path="posts/create" element={<EditLayout />} />
+            <Route path="posts/:id/update" element={<EditLayout />} />
             <Route path="series" element={<WithHeaderLayout />}>
               <Route path="create" element={<CreateSeries />} />
               <Route path=":id" element={<SeriesDetail />} />
@@ -86,7 +87,7 @@ export default function App() {
             </Route>
 
             <Route path="admin" element={<AdminLayout />}>
-              <Route path="users" element={<User />} />
+              <Route index element={<User />} />
               <Route path="tags" element={<Tags />} />
               <Route path="roles" element={<Roles />} />
               <Route path="posts" element={<PostControl />} />

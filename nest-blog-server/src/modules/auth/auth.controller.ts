@@ -47,7 +47,6 @@ export class AuthController {
   @Get('account')
   @ResponseMessage("This api returns user's information by access token")
   async getUserAccount(@User() user: IUser) {
-    console.log(user);
     return user;
   }
 
@@ -71,5 +70,11 @@ export class AuthController {
   @Get('check-account/:username')
   checkUserAccount(@Param('username') username: string) {
     return this.usersService.hasUsernameExisted(username);
+  }
+
+  @Post('logout')
+  @ResponseMessage('This API returns OK if user logout successfully')
+  logout(@User() user: IUser, @Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(user, res);
   }
 }

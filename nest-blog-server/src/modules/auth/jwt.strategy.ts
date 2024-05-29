@@ -31,6 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       name,
       profileImageUrl,
       permissions: temp?.permissions ?? [],
+      role: { name: temp.name },
     };
   }
 }

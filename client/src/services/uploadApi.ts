@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { IBackendRes } from "../types/backend";
+import { IBackendRes, PublicFile } from "../types/backend";
 import axiosInstance from "./config";
 
 const uploadSingleFile = async (
@@ -11,7 +11,7 @@ const uploadSingleFile = async (
   const bodyFormData = new FormData();
   bodyFormData.append("file", file);
   try {
-    const res: AxiosResponse<IBackendRes<{ fileName: string }>> =
+    const res: AxiosResponse<IBackendRes<PublicFile>> =
       await axiosInstance.post("/upload", bodyFormData, {
         ...config,
         headers: {

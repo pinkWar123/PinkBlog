@@ -22,6 +22,7 @@ import axiosInstance from "../../../services/config";
 import { uploadSingleFile } from "../../../services/uploadApi";
 import { IBackendRes, ITag, IUpdateResponse } from "../../../types/backend";
 import ModalFooter from "../../../components/shared/ModalFooter";
+import { FileType } from "../../../types/antd-type";
 
 interface TagFormProps {
   type: "edit" | "add";
@@ -36,7 +37,6 @@ interface DisplayProps {
   value: string;
   color: string;
 }
-type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 const TagForm: React.FC<TagFormProps> = ({
   title,

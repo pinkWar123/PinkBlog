@@ -92,6 +92,15 @@ const fetchPostsByAuthorId = async (
   }
 };
 
+const fetchFollowingPosts = async (
+  current: number = 1,
+  pageSize: number = 5
+) => {
+  return await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+    `posts/following?current=${current}&pageSize=${pageSize}`
+  );
+};
+
 const updatePostById = async (id: string, updatePostDto: UpdatePostDto) => {
   return await axiosInstance.patch<IBackendRes<IUpdateResponse>>(
     `posts/${id}`,
@@ -131,14 +140,22 @@ const downvote = async (_id: string) => {
   }
 };
 
+const removePostById = async (id: string) => {
+  return await axiosInstance.delete<IBackendRes<IUpdateResponse>>(
+    `/posts/${id}`
+  );
+};
+
 export {
   createPost,
   fetchPublicPosts,
   fetchPostById,
   fetchLatestPosts,
+  fetchFollowingPosts,
   fetchPostsByAuthorId,
   updatePostById,
   fetchPosts,
   upvote,
   downvote,
+  removePostById,
 };

@@ -68,6 +68,8 @@ export class AuthService {
     );
     res.cookie('refresh_token', refreshToken, {
       httpOnly: true,
+      sameSite: 'none',
+      domain: 'localhost',
       maxAge:
         ms(this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRE')) / 1000,
     });
@@ -127,6 +129,17 @@ export class AuthService {
       }
     } catch (error) {
       throw new BadRequestException(error.message);
+    }
+  }
+
+  async logout(user: IUser, res: Response) {
+    const response = await this.usersService.updateUserRefreshToken(
+      user._id,
+      null,
+    );
+    if (response) {
+      res.clearCookie('refresh_token');
+      return 'OK';
     }
   }
 }

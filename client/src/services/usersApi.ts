@@ -68,11 +68,14 @@ const handleFollowUserById = async (
 const fetchFollowersOfUserById = async (
   targetUserId: string,
   current: number = 0,
-  pageSize: number = 5
+  pageSize: number = 5,
+  visitorId?: string
 ) => {
   try {
+    let query = `/users/${targetUserId}/followers?current=${current}&pageSize=${pageSize}`;
+    if (visitorId) query += `&visitorId=${visitorId}`;
     const res = await axiosInstance.get<IBackendRes<IPagination<IFollower>>>(
-      `/users/${targetUserId}/followers?current=${current}&pageSize=${pageSize}`
+      query
     );
     return res;
   } catch (error) {
