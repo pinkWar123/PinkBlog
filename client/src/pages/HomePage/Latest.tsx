@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { IPost } from "../../types/backend";
-import { fetchLatestPosts } from "../../services/postsApi";
+import { fetchFollowingPosts, fetchLatestPosts } from "../../services/postsApi";
 import { Skeleton } from "antd";
 import { PostItem } from "../../components/shared";
 import { useLocation, useNavigate } from "react-router-dom";
 import PaginationHandler from "../../components/shared/PaginationHandler";
+import { fetchSeriesWithPagination } from "../../services/seriesApi";
 
 interface IProps {
   type: "following" | "content-creator" | "latest" | "series";
+  module?: string;
 }
 
-const Content: React.FC<IProps> = ({ type }) => {
+const Content: React.FC<IProps> = ({ type, module = "posts" }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [posts, setPosts] = useState<IPost[] | undefined>([]);
@@ -21,13 +23,13 @@ const Content: React.FC<IProps> = ({ type }) => {
       let res;
       switch (type) {
         case "following":
-          res = null; // todo
+          res = await fetchFollowingPosts(page, 5); // todo
           break;
         case "series":
-          res = null; // todo
+          res = await fetchSeriesWithPagination(page, 5); // todo
           break;
         case "content-creator":
-          res = null; // todo
+          res = await fetchSeriesWithPagination(page, 5); // todo
           break;
         case "latest":
           res = await fetchLatestPosts(page, 5);
@@ -38,10 +40,10 @@ const Content: React.FC<IProps> = ({ type }) => {
       }
       if (res?.status === 200) {
         console.log(res);
-        setPosts(res.data.data?.result);
+        setPosts(res.data.data?.result as IPost[]);
       }
       setLoading(false);
-      return res?.data.data?.meta;
+      return res?.data?.data?.meta;
     },
     [type, setPosts, setLoading]
   );
@@ -68,7 +70,7 @@ const Content: React.FC<IProps> = ({ type }) => {
                     createdBy={post.createdBy}
                     title={post.title}
                     key={index}
-                    onClick={(e) => navigate(`/posts/${post._id}`)}
+                    onClick={(e) => navigate(`/${module}/${post._id}`)}
                   />
                 );
               })}
@@ -93,7 +95,7 @@ export const ContentCreator: React.FC = () => {
 };
 
 export const Series: React.FC = () => {
-  return <Content type="series" />;
+  return <Content type="series" module="series" />;
 };
 
 export default Content;

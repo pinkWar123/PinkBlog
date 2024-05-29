@@ -62,7 +62,7 @@ const MainHeader: React.FC = () => {
     {
       icon: <EditFilled />,
       label: "Viết bài",
-      onClick: () => navigate(`/edit`),
+      onClick: () => navigate(`/posts/create`),
     },
     {
       icon: <UnorderedListOutlined />,

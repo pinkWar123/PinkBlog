@@ -107,20 +107,22 @@ const Series: React.FC = () => {
               Nội dung
             </Col>
             <Col
-              span={16}
+              span={user?._id === series?.createdBy?._id ? 16 : 22}
               style={{
                 border: "1px solid #eee",
                 height: "1px",
                 marginTop: "12px",
               }}
             ></Col>
-            <Col
-              span={6}
-              style={{ cursor: "pointer" }}
-              onClick={() => setShowAddPostModal(true)}
-            >
-              <PlusOutlined /> Thêm bài viết vào series
-            </Col>
+            {user?._id === series?.createdBy?._id && (
+              <Col
+                span={6}
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowAddPostModal(true)}
+              >
+                <PlusOutlined /> Thêm bài viết vào series
+              </Col>
+            )}
           </Row>
           {series?.posts?.map((post) => (
             <>

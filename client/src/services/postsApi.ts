@@ -92,6 +92,15 @@ const fetchPostsByAuthorId = async (
   }
 };
 
+const fetchFollowingPosts = async (
+  current: number = 1,
+  pageSize: number = 5
+) => {
+  return await axiosInstance.get<IBackendRes<IPagination<IPost>>>(
+    `posts/following?current=${current}&pageSize=${pageSize}`
+  );
+};
+
 const updatePostById = async (id: string, updatePostDto: UpdatePostDto) => {
   return await axiosInstance.patch<IBackendRes<IUpdateResponse>>(
     `posts/${id}`,
@@ -142,6 +151,7 @@ export {
   fetchPublicPosts,
   fetchPostById,
   fetchLatestPosts,
+  fetchFollowingPosts,
   fetchPostsByAuthorId,
   updatePostById,
   fetchPosts,
