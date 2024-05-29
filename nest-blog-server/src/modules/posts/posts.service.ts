@@ -70,7 +70,6 @@ export class PostsService {
     const totalItems = await this.postModel.count({
       ...filter,
     });
-    console.log(filter);
     const totalPages = Math.ceil(totalItems / pageSize);
     const calculatedSkip = (current - 1) * pageSize;
 
@@ -119,7 +118,7 @@ export class PostsService {
     const postToUpdate = await this.postModel.findById(id);
     const createdBy =
       postToUpdate?.createdBy as unknown as mongoose.Types.ObjectId;
-    if (!createdBy.equals(user._id) || user?.role?.name === 'ADMIN')
+    if (!createdBy.equals(user._id) && user?.role?.name !== 'ADMIN')
       throw new ForbiddenException('Only author or admin can modify a post');
     const res = await this.postModel.updateOne(
       { _id: id },
@@ -162,6 +161,28 @@ export class PostsService {
       });
       await Promise.all(promises);
     }
+  }
+
+  async findFollowingPosts(current: number, pageSize: number, user: IUser) {
+    const _user = await this.userModel.findById(user._id);
+    if (_user?.following?.length === 0) {
+      return {
+        meta: {
+          pageSize,
+          pages: 0,
+          total: 0,
+        },
+        result: [],
+      };
+    }
+    const followingIds = _user?.following?.map((item) => {
+      const _item = item as unknown as { _id: mongoose.Types.ObjectId };
+      return _item._id.toString();
+    });
+    let queryString = 'createdBy=';
+    followingIds?.forEach((id) => (queryString += `${id},`));
+    queryString = queryString.slice(0, -1);
+    return await this.findAll(pageSize, current, queryString);
   }
 
   async upvote(user: IUser, voteDto: VoteDto) {

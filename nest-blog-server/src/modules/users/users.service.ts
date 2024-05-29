@@ -240,6 +240,14 @@ export class UsersService {
             },
           },
         );
+        await this.userModel.updateOne(
+          { _id: followDto._id },
+          {
+            $pull: {
+              following: new mongoose.Types.ObjectId(targetId),
+            },
+          },
+        );
       } else {
         const res = await this.userModel.updateOne(
           { _id: targetId },
@@ -247,7 +255,16 @@ export class UsersService {
             $push: { followedBy: followDto._id },
           },
         );
-        console.log(res);
+        await this.userModel.updateOne(
+          {
+            _id: followDto._id,
+          },
+          {
+            $push: {
+              following: new mongoose.Types.ObjectId(targetId),
+            },
+          },
+        );
       }
       return {
         isFollowed: !hasFollowedUser,
