@@ -18,14 +18,14 @@ const PostPage: React.FC = () => {
   const [post, setPost] = useState<IPost | undefined>();
   useEffect(() => {
     const fetchPost = async () => {
-      if (!id) return;
+      if (!id || post) return;
       const res = await fetchPostById(id);
       if (res) {
         setPost(res.data.data);
       }
     };
     fetchPost();
-  }, [id]);
+  }, [id, post]);
 
   return (
     <div style={{ paddingBottom: "64px" }}>

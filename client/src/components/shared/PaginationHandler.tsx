@@ -1,4 +1,4 @@
-import { Col, Pagination, PaginationProps, Row } from "antd";
+import { Col, Empty, Pagination, PaginationProps, Row, Skeleton } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -12,7 +12,7 @@ interface PaginationHandlerProps {
     | undefined
   >;
   module?: string;
-  children: React.ReactElement;
+  children: any;
 }
 
 const PaginationHandler: React.FC<PaginationHandlerProps> = ({
@@ -25,25 +25,30 @@ const PaginationHandler: React.FC<PaginationHandlerProps> = ({
   const [total, setTotal] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(0);
   const [current, setCurrent] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isEmpty, setIsEmpty] = useState<boolean | undefined>();
   const fetchDataWithPagination = useCallback(
-    (page: number) => {
-      const fetchPageData = async (page: number) => {
-        const meta = await fetchData(page);
-        setTotal(meta?.total ?? 0);
-        setPageSize(meta?.pageSize ?? 0);
-        setCurrent(page);
-      };
-      fetchPageData(page);
+    async (page: number) => {
+      setLoading(true);
+      const meta = await fetchData(page);
+      if (meta?.total && meta.total > 0) setIsEmpty(false);
+      else setIsEmpty(true);
+      setTotal(meta?.total ?? 0);
+      setPageSize(meta?.pageSize ?? 0);
+      setCurrent(page);
+      setLoading(false);
     },
     [fetchData]
   );
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const pageString = searchParams.get("page");
-    const page = pageString ? parseInt(pageString, 10) : 1;
-    console.log(page);
-    fetchDataWithPagination(page);
-  }, [location.search, fetchData, fetchDataWithPagination]);
+    const updatePostOnChange = () => {
+      const searchParams = new URLSearchParams(location.search);
+      const pageString = searchParams.get("page");
+      const page = pageString ? parseInt(pageString, 10) : 1;
+      fetchDataWithPagination(page);
+    };
+    updatePostOnChange();
+  }, [location.search, fetchDataWithPagination]);
   const onChange: PaginationProps["onChange"] = async (pageNumber) => {
     console.log("Page: ", pageNumber);
     if (module) navigate(`/${module}?page=${pageNumber}`);
@@ -51,29 +56,33 @@ const PaginationHandler: React.FC<PaginationHandlerProps> = ({
     // window.location.href = `localhost:3000/${type}?page=${pageNumber}`;
     fetchDataWithPagination(pageNumber);
   };
-  return (
-    <Row style={{ width: "100%" }}>
-      <Col span={24}>{children}</Col>
-      <Col span={24}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "85%",
-            marginTop: "30px",
-          }}
-        >
-          <Pagination
-            current={current}
-            pageSize={pageSize}
-            total={total}
-            onChange={onChange}
-            style={{ marginTop: "50px", paddingBottom: "50px" }}
-          />
-        </div>
-      </Col>
-    </Row>
-  );
+  if (isEmpty === undefined || isEmpty === false)
+    return (
+      <Skeleton loading={loading}>
+        <Row style={{ width: "100%" }}>
+          <Col span={24}>{children}</Col>
+          <Col span={24}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                width: "85%",
+                marginTop: "30px",
+              }}
+            >
+              <Pagination
+                current={current}
+                pageSize={pageSize}
+                total={total}
+                onChange={onChange}
+                style={{ marginTop: "50px", paddingBottom: "50px" }}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Skeleton>
+    );
+  else return <Empty />;
 };
 
 export default PaginationHandler;
