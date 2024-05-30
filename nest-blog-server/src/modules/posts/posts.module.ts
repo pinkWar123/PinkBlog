@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Post, PostSchema } from './schemas/post.schema';
 import { Series, SeriesSchema } from 'src/series/schemas/series.schema';
 import { User, UserSchema } from '@modules/users/schemas/user.schema';
+import { RedisService } from '@modules/redis/redis.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { User, UserSchema } from '@modules/users/schemas/user.schema';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [PostsController],
-  providers: [PostsService],
+  providers: [PostsService, RedisService],
   exports: [PostsService],
 })
 export class PostsModule {}

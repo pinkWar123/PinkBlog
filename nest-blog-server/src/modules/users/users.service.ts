@@ -12,6 +12,7 @@ import { Role, RoleDocument } from '@modules/roles/schemas/role.schema';
 import { plainToInstance } from 'class-transformer';
 import { UploadService } from '@modules/upload/upload-file.service';
 import { PublicFile } from '@modules/shared/upload/public-file';
+import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class UsersService {
   constructor(

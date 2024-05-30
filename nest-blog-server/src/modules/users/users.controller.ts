@@ -11,6 +11,7 @@ import {
   Query,
   ParseIntPipe,
   UploadedFile,
+  Inject,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserRegisterDto } from './dto/create-user.dto';
@@ -21,12 +22,17 @@ import { ResponseMessage } from 'src/decorators/response.message';
 import { User } from 'src/decorators/user';
 import { IUser } from 'src/types/user.type';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CACHE_MANAGER, CacheInterceptor } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 @ApiTags('Users')
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor('file'))
@@ -53,8 +59,20 @@ export class UsersController {
   @Public()
   @Get(':id')
   @ResponseMessage('This api returns some basic information of a user by id')
-  findOne(@Param('id') id: string, @Query('visitorId') visitorId: string) {
-    return this.usersService.findOneById(id, visitorId);
+  async findOne(
+    @Param('id') id: string,
+    @Query('visitorId') visitorId: string,
+  ) {
+    const val = await this.cacheManager.get('user');
+    if (!val) {
+      console.log('Missed cache');
+    } else {
+      console.log('Cached hit:');
+      return val;
+    }
+    const res = await this.usersService.findOneById(id, visitorId);
+    await this.cacheManager.set('user', res, 60000);
+    return res;
   }
 
   @Public()

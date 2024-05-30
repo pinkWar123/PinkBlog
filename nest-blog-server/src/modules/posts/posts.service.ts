@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ForbiddenException,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -13,6 +14,12 @@ import aqp from 'api-query-params';
 import { Series, SeriesDocument } from 'src/series/schemas/series.schema';
 import mongoose from 'mongoose';
 import { User, UserDocument } from '@modules/users/schemas/user.schema';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { RedisStore } from 'cache-manager-redis-yet';
+import { RedisCache } from 'cache-manager-redis-yet';
+import { RedisService } from '@modules/redis/redis.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class PostsService {
@@ -21,6 +28,7 @@ export class PostsService {
     @InjectModel(Series.name)
     private seriesModel: SoftDeleteModel<SeriesDocument>,
     @InjectModel(User.name) private userModel: SoftDeleteModel<UserDocument>,
+    private redisService: RedisService,
   ) {}
   async create(createPostDto: CreatePostDto, user: IUser) {
     try {
@@ -101,10 +109,15 @@ export class PostsService {
     try {
       const res = await this.postModel.findById(id);
       if (res) {
+        const post1 = await this.redisService.get(`posts:${id}:viewcount`);
+        console.log('Output1', post1);
+        const post2 = await this.redisService.get(`posts:${id}`);
+        console.log('Output2', post2);
         const post = (await res.populate('tags', '_id value')).populate(
           'createdBy',
           '_id username profileImageUrl email',
         );
+        await this.redisService.incr(`posts:${id}:viewcount`);
         return post;
       }
       return null;
@@ -303,5 +316,39 @@ export class PostsService {
       await Promise.all(promises);
     }
     return res;
+  }
+
+  @Cron(CronExpression.EVERY_30_SECONDS)
+  async updateViewCount() {
+    const keys = await this.redisService.keys('posts:*:viewcount');
+    // console.log(keys);
+
+    await Promise.all(
+      keys?.map(async (key) => {
+        const id = key.split(':')[1];
+        const views = parseInt(await this.redisService.get(key), 10);
+        if (views > 0) {
+          await this.postModel.updateOne(
+            { _id: id },
+            {
+              $inc: {
+                viewCount: views,
+              },
+            },
+          );
+          await this.seriesModel.updateMany(
+            {
+              posts: new mongoose.Types.ObjectId(id),
+            },
+            {
+              $inc: {
+                viewCount: views,
+              },
+            },
+          );
+          await this.redisService.del(key);
+        }
+      }),
+    );
   }
 }
