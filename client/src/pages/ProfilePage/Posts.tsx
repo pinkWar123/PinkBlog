@@ -38,6 +38,7 @@ const Posts: React.FC = () => {
                 createdAt={post.createdAt}
                 createdBy={post.createdBy}
                 title={post.title}
+                viewCount={post.viewCount}
                 key={index}
                 onClick={(e) => navigate(`/posts/${post._id}`)}
                 actions={

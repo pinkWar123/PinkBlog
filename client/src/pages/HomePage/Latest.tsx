@@ -54,6 +54,7 @@ const Content: React.FC<IProps> = ({ type, module = "posts" }) => {
                 title={post.title}
                 key={index}
                 onClick={(e) => navigate(`/${module}/${post._id}`)}
+                viewCount={post.viewCount}
               />
             );
           })}

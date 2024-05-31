@@ -1,8 +1,9 @@
-import { Avatar, Card, Tag } from "antd";
+import { Avatar, Card, Tag, Tooltip } from "antd";
 import styles from "./PostItem.module.scss";
 import { IPost, ITag } from "../../../types/backend";
 import { getFormatDate } from "../../../utils/formateDate";
 import { MouseEventHandler } from "react";
+import { EyeOutlined } from "@ant-design/icons";
 const { Meta } = Card;
 
 interface IProps {
@@ -16,6 +17,7 @@ interface IProps {
   tags: ITag[];
   onClick?: MouseEventHandler<HTMLDivElement> | undefined;
   actions?: React.ReactElement[];
+  viewCount: number;
 }
 
 const PostItem: React.FC<IProps> = ({
@@ -23,16 +25,13 @@ const PostItem: React.FC<IProps> = ({
   createdBy,
   createdAt,
   tags,
+  viewCount,
   actions,
   onClick,
 }) => {
   return (
     <div className={styles["post-item"]} onClick={onClick}>
-      <Card
-        hoverable
-        style={{ marginTop: "12px", width: "95%" }}
-        actions={actions}
-      >
+      <Card style={{ marginTop: "12px", width: "95%" }} actions={actions}>
         <Meta
           avatar={
             <Avatar
@@ -52,7 +51,13 @@ const PostItem: React.FC<IProps> = ({
                 flexWrap: "wrap",
               }}
             >
-              <div style={{ textAlign: "center" }}>{createdBy?.username}</div>
+              <a
+                style={{ textAlign: "center" }}
+                href={`${process.env.REACT_APP_BASE_URL}/profile/${createdBy._id}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {createdBy?.username}
+              </a>
               <div
                 style={{
                   color: "rgba(0,0,0,0.3)",
@@ -82,6 +87,11 @@ const PostItem: React.FC<IProps> = ({
                         </Tag>
                       );
                     })}
+                </div>
+                <div style={{ fontSize: "16px" }}>
+                  <Tooltip title="Lượt xem">
+                    <EyeOutlined /> {viewCount}
+                  </Tooltip>
                 </div>
               </li>
             </ul>

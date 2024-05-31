@@ -34,6 +34,7 @@ const Series: React.FC = () => {
               createdBy={serie.createdBy}
               createdAt={serie.createdAt}
               tags={serie.tags}
+              viewCount={serie.viewCount}
               onClick={() => navigate(`/series/${serie._id}`)}
             />
           ))}

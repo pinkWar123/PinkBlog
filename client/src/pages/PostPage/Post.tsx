@@ -2,7 +2,12 @@ import { Avatar, Tag, Typography } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { IPost } from "../../types/backend";
 import { fetchPostById } from "../../services/postsApi";
-import { EditOutlined, StarOutlined, UserAddOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeOutlined,
+  StarOutlined,
+  UserAddOutlined,
+} from "@ant-design/icons";
 import styles from "./PostPage.module.scss";
 import ShowTopPostsContext from "../../context/top-posts/ShowTopPostContext";
 
@@ -64,7 +69,12 @@ const Post: React.FC<{ post: IPost | undefined }> = ({ post }) => {
             </div>
           </div>
         </div>
-        <div>Đã đăng vào khoảng 22 giờ trước - 12 phút đọc</div>
+        <div>
+          <div>Đã đăng vào khoảng 22 giờ trước - 12 phút đọc</div>
+          <div style={{ marginTop: "12px" }}>
+            <EyeOutlined /> : {post?.viewCount ?? 0}
+          </div>
+        </div>
       </div>
       <Typography.Title>{post?.title}</Typography.Title>
       <Typography.Paragraph>
