@@ -44,10 +44,7 @@ const Posts: React.FC = () => {
         key: "_id",
         editable: false,
         render: (_id: string) => (
-          <Typography.Link
-            href={`${process.env.REACT_APP_BASE_URL}/posts/${_id}`}
-            target="_blank"
-          >
+          <Typography.Link href={`/posts/${_id}`} target="_blank">
             {_id}
           </Typography.Link>
         ),
@@ -60,7 +57,7 @@ const Posts: React.FC = () => {
         render: (value: IUser) => (
           <Typography.Link
             target="_blank"
-            href={`${process.env.REACT_APP_BASE_URL}/profile/${value?._id}`}
+            href={`/profile/${value?._id}`}
             ellipsis
           >
             {value?.username}

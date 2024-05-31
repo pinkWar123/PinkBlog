@@ -110,7 +110,7 @@ const MainLayout: React.FC = () => {
                 topPosts.map((topPost) => (
                   <div>
                     <a
-                      href={`${process.env.REACT_APP_BASE_URL}/posts/${topPost._id}`}
+                      href={`/posts/${topPost._id}`}
                       style={{ lineHeight: "20px" }}
                     >
                       {topPost.title}

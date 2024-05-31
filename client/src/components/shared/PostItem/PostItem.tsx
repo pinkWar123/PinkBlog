@@ -53,7 +53,7 @@ const PostItem: React.FC<IProps> = ({
             >
               <a
                 style={{ textAlign: "center" }}
-                href={`${process.env.REACT_APP_BASE_URL}/profile/${createdBy._id}`}
+                href={`/profile/${createdBy._id}`}
                 onClick={(e) => e.stopPropagation()}
               >
                 {createdBy?.username}

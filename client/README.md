@@ -9,7 +9,7 @@ In the project directory, you can run:
 ### `npm start`
 
 Runs the app in the development mode.\
-Open [${process.env.REACT_APP_BASE_URL}](${process.env.REACT_APP_BASE_URL}) to view it in the browser.
+Open []() to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
