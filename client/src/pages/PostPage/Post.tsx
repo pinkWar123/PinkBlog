@@ -50,7 +50,7 @@ const Post: React.FC<{ post: IPost | undefined }> = ({ post }) => {
           <Avatar src={post?.createdBy?.profileImageUrl} size={40} />
           <div style={{ marginLeft: "24px" }}>
             <a
-              href={`http://localhost:3000/profile/${post?.createdBy?._id}`}
+              href={`${process.env.REACT_APP_BASE_URL}/profile/${post?.createdBy?._id}`}
               target="_blank"
               rel="noreferrer"
             >
