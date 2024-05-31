@@ -50,6 +50,12 @@ export class Post extends BaseEntity {
   })
   status: string;
 
+  @Prop({
+    type: Number,
+    default: 0,
+  })
+  viewCount: number;
+
   @Prop({ default: null, type: Date })
   createdAt: Date;
 

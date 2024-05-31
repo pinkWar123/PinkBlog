@@ -18,13 +18,17 @@ import { PermissionsModule } from '@modules/permissions/permissions.module';
 import { RolesModule } from '@modules/roles/roles.module';
 import { SeedingModule } from '@modules/seeding/seeding.module';
 import { SeriesModule } from './series/series.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
+import type { RedisClientOptions } from 'redis';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/public/',
     }),
-    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -36,6 +40,27 @@ import { SeriesModule } from './series/series.module';
       }),
       inject: [ConfigService],
     }),
+    CacheModule.register<RedisClientOptions>({
+      isGlobal: true,
+      store: redisStore,
+      ttl: 30 * 1000,
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const store = await redisStore({
+          ttl: 30 * 1000,
+          socket: {
+            host: configService.getOrThrow<string>('REDIS_HOST'),
+            port: configService.getOrThrow<number>('REDIS_PORT'),
+          },
+        });
+        return { store };
+      },
+      inject: [ConfigService],
+    }),
+
     AuthModule,
     UsersModule,
     UploadModule,
@@ -46,6 +71,7 @@ import { SeriesModule } from './series/series.module';
     RolesModule,
     SeedingModule,
     SeriesModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [

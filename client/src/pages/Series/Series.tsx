@@ -131,6 +131,7 @@ const Series: React.FC = () => {
                 createdAt={post.createdAt}
                 createdBy={post.createdBy}
                 tags={post.tags}
+                viewCount={post.viewCount}
                 onClick={() => navigate(`/posts/${post._id}`)}
                 actions={
                   user?._id === post.createdBy._id

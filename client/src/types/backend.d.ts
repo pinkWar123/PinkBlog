@@ -80,6 +80,7 @@ export interface IPost {
   updatedAt: Date;
   status: "PENDING" | "APPROVED" | "REJECTED";
   access: "private" | "public";
+  viewCount: number;
 }
 
 export interface IComment {
